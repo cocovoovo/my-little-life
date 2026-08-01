@@ -1,0 +1,4635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🌸 我的小日子 - 个人生活工作台</title>
+  <style>
+/* ===== 卡通可爱主题变量 ===== */
+:root {
+  --bg-primary: #fff5f7;
+  --bg-card: #ffffff;
+  --bg-sidebar: #fff0f3;
+  --text-primary: #5c4b51;
+  --text-muted: #b8a9ad;
+  --text-heading: #4a3b41;
+  --accent: #ff7eb3;
+  --accent-light: #ffe0eb;
+  --accent-dark: #e5609a;
+  --success: #7ecb76;
+  --success-light: #e0f5dc;
+  --warning: #ffb347;
+  --warning-light: #fff3dc;
+  --danger: #ff6b6b;
+  --danger-light: #ffe0e0;
+  --info: #7ec8e3;
+  --info-light: #ddf2f9;
+  --border: #f0dce2;
+  --shadow: 0 4px 16px rgba(255, 126, 179, 0.12);
+  --shadow-lg: 0 8px 30px rgba(255, 126, 179, 0.18);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --sidebar-width: 280px;
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+/* 个人信息 */
+.profile-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 2px solid var(--accent-light);
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd1e0, #ffe0eb);
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  cursor: pointer;
+  position: relative;
+  border: 3px solid var(--accent-light);
+  transition: transform 0.2s;
+}
+.profile-avatar:hover { transform: scale(1.08); }
+.avatar-edit-hint {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.profile-avatar:hover .avatar-edit-hint { opacity: 1; }
+
+.profile-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+.profile-signature {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.checkin-stats {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 12px;
+}
+.checkin-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.checkin-label { font-size: 0.7rem; color: var(--text-muted); }
+.checkin-value { font-size: 1rem; font-weight: 700; color: var(--accent); }
+
+.checkin-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border: none;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(255, 126, 179, 0.35);
+}
+.checkin-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255, 126, 179, 0.45); }
+.checkin-btn.checked { background: var(--success); box-shadow: 0 4px 12px rgba(126, 203, 118, 0.35); }
+
+/* ===== 电子宠物 ===== */
+.pet-section {
+  background: linear-gradient(135deg, #fff8e1, #fffde7);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+  border: 2px solid #ffe082;
+  box-shadow: 0 4px 12px rgba(255, 183, 77, 0.15);
+}
+.pet-display {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.pet-display:active { transform: scale(0.95); }
+.pet-avatar {
+  font-size: 2.8rem;
+  transition: all 0.3s;
+  animation: petBounce 2s ease-in-out infinite;
+}
+@keyframes petBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.pet-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e65100;
+  margin: 4px 0;
+}
+.pet-status {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 6px 0;
+}
+.pet-stat {
+  font-size: 0.75rem;
+  color: #795548;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.pet-hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.pet-speech {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #5c4b51;
+  border: 1px solid #ffe082;
+  opacity: 0;
+  transition: opacity 0.3s;
+  position: relative;
+}
+.pet-speech::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffe082;
+}
+.pet-speech.active { opacity: 1; }
+
+/* 导航 */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+.nav-item:hover { background: var(--accent-light); }
+.nav-item.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(255, 126, 179, 0.3);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding-top: 12px;
+}
+
+/* 移动端汉堡菜单 */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+/* ===== 主内容区 ===== */
+.main-area {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== 日历 ===== */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.cal-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  min-width: 150px;
+  text-align: center;
+}
+.cal-nav-btn, .cal-today-btn {
+  padding: 8px 14px;
+  border: 2px solid var(--accent-light);
+  background: var(--bg-card);
+  border-radius: 20px;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+.cal-nav-btn:hover, .cal-today-btn:hover { background: var(--accent-light); }
+.cal-today-btn { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 8px 0;
+  margin-bottom: 4px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 60px;
+  overflow: hidden;
+}
+.calendar-cell:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.calendar-cell.today {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.calendar-cell.other-month {
+  opacity: 0.35;
+  cursor: default;
+}
+.calendar-cell.period {
+  background: #ffe0ec;
+  border-color: #ffb3cc;
+}
+
+.cell-date {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.cell-icons {
+  display: flex;
+  gap: 1px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.6rem;
+  line-height: 1;
+}
+.cell-weight-diff {
+  font-size: 0.55rem;
+  font-weight: 700;
+  margin-top: auto;
+  padding: 1px 4px;
+  border-radius: 8px;
+}
+.cell-weight-diff.gain { color: #e5609a; background: #ffe0eb; }
+.cell-weight-diff.loss { color: #7ecb76; background: #e0f5dc; }
+.cell-weight-diff.zero { color: var(--text-muted); }
+
+.calendar-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+/* ===== 弹窗通用 ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--accent-light);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.modal-header h3 { font-size: 1.1rem; color: var(--text-heading); }
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--danger-light);
+  color: var(--danger);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 日详情 */
+.day-detail-modal { max-width: 480px; }
+.detail-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-sm);
+}
+.detail-section h4 { font-size: 0.9rem; margin-bottom: 8px; color: var(--text-heading); }
+.detail-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.detail-row select, .detail-row input[type="number"], .detail-row input[type="text"] {
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  background: #fff;
+  color: var(--text-primary);
+  font-family: var(--font);
+  outline: none;
+}
+.detail-row select:focus, .detail-row input:focus { border-color: var(--accent); }
+.detail-row button {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font);
+}
+.detail-row button:hover { background: var(--accent-dark); }
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--accent-light);
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: var(--accent-dark);
+}
+.tag .tag-remove {
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.toggle-label input[type="checkbox"] {
+  width: 20px; height: 20px;
+  accent-color: var(--accent);
+}
+
+/* 个人资料编辑 */
+.profile-modal { max-width: 420px; }
+.profile-edit-body { display: flex; flex-direction: column; gap: 16px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-heading); }
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--text-primary);
+  font-family: var(--font);
+  outline: none;
+}
+.form-group input:focus { border-color: var(--accent); }
+
+.avatar-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.avatar-option {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fff;
+}
+.avatar-option:hover { border-color: var(--accent); transform: scale(1.1); }
+.avatar-option.selected { border-color: var(--accent); background: var(--accent-light); }
+
+.btn-primary {
+  padding: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border: none;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 126, 179, 0.3);
+  font-family: var(--font);
+}
+
+/* ===== 饮食 ===== */
+.diet-layout { display: flex; flex-direction: column; gap: 16px; }
+.diet-date-header, .finance-date-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.diet-date-header h3, .finance-date-header h3 { font-size: 1.1rem; color: var(--text-heading); }
+.diet-date-header button, .finance-date-header button {
+  padding: 6px 14px;
+  border: 2px solid var(--accent-light);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font);
+}
+
+.diet-meals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.meal-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.meal-header { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; color: var(--text-heading); }
+.meal-items { min-height: 20px; margin-bottom: 8px; }
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+}
+.meal-item-name { flex: 1; }
+.meal-item-cal { color: var(--accent); font-weight: 600; margin: 0 8px; white-space: nowrap; }
+.meal-item-photo { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; cursor: pointer; margin-right: 4px; }
+.meal-item-del { color: var(--danger); cursor: pointer; font-size: 0.9rem; }
+.meal-add-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.meal-add-row input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background: #fff;
+  color: var(--text-primary);
+  font-family: var(--font);
+  outline: none;
+  min-width: 0;
+}
+.meal-add-row input[type="text"]:focus { border-color: var(--accent); }
+.meal-add-row button {
+  padding: 8px 14px;
+  background: var(--accent);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--font);
+  white-space: nowrap;
+}
+.meal-photo-input { display: none; }
+.meal-photo-btn {
+  padding: 8px 10px !important;
+  background: var(--info-light) !important;
+  color: var(--info) !important;
+  border-radius: 50% !important;
+  font-size: 1rem !important;
+}
+
+.diet-summary {
+  text-align: center;
+  padding: 12px;
+  background: var(--accent-light);
+  border-radius: var(--radius);
+}
+.diet-cal-total { font-size: 1rem; }
+.diet-cal-total strong { color: var(--accent); font-size: 1.3rem; }
+
+.diet-extra {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.diet-summary-btn, .diet-history-btn {
+  padding: 10px 20px;
+  border: 2px solid var(--accent-light);
+  background: #fff;
+  border-radius: 20px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font);
+  transition: all 0.2s;
+}
+.diet-summary-btn:hover, .diet-history-btn:hover { background: var(--accent-light); }
+
+.diet-monthly-panel, .diet-history-panel {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-light);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 12px;
+}
+.diet-monthly-panel h4, .diet-history-panel h4 { margin-bottom: 10px; color: var(--text-heading); }
+
+.diet-history-body { max-height: 60vh; overflow-y: auto; }
+.diet-history-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+}
+.diet-history-item:last-child { border-bottom: none; }
+
+/* ===== 记账 ===== */
+.finance-layout { display: flex; flex-direction: column; gap: 16px; }
+.finance-summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.finance-summary-item {
+  padding: 14px;
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: 0.8rem;
+}
+.finance-summary-item strong { display: block; font-size: 1.2rem; margin-top: 4px; }
+.finance-summary-item.income { background: var(--success-light); color: #3d8b37; }
+.finance-summary-item.expense { background: var(--danger-light); color: #c0392b; }
+.finance-summary-item.balance { background: var(--info-light); color: #2471a3; }
+
+.finance-add-form {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  padding: 14px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+}
+.finance-add-form input, .finance-add-form select {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  background: #fff;
+  font-family: var(--font);
+  outline: none;
+  min-width: 0;
+}
+.finance-add-form input:focus, .finance-add-form select:focus { border-color: var(--accent); }
+.finance-add-form input[type="text"] { flex: 2; }
+.finance-add-form input[type="number"] { flex: 1; min-width: 80px; }
+.finance-add-form select { flex: 1; }
+.finance-add-form button {
+  padding: 10px 20px;
+  background: var(--accent);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.85rem;
+}
+
+.finance-list { display: flex; flex-direction: column; gap: 6px; }
+.finance-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  gap: 10px;
+}
+.finance-item .fi-icon { font-size: 1.2rem; }
+.finance-item .fi-desc { flex: 1; }
+.finance-item .fi-category { color: var(--text-muted); font-size: 0.75rem; }
+.finance-item .fi-amount { font-weight: 700; }
+.finance-item .fi-amount.expense { color: var(--danger); }
+.finance-item .fi-amount.income { color: var(--success); }
+.finance-item .fi-del { color: var(--text-muted); cursor: pointer; }
+
+/* ===== 趋势 ===== */
+.trends-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.trend-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.trend-card h3 { font-size: 0.95rem; color: var(--text-heading); margin-bottom: 10px; }
+.trend-chart {
+  width: 100%;
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+.trend-bar-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 100%;
+  padding-top: 20px;
+}
+.trend-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.trend-bar {
+  width: 100%;
+  max-width: 30px;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.3s;
+  position: relative;
+  min-height: 2px;
+}
+.trend-bar.pink { background: linear-gradient(to top, #ff7eb3, #ffb3cc); }
+.trend-bar.green { background: linear-gradient(to top, #7ecb76, #a8e6a1); }
+.trend-bar.blue { background: linear-gradient(to top, #7ec8e3, #b3e0f5); }
+.trend-bar.orange { background: linear-gradient(to top, #ffb347, #ffd699); }
+.trend-bar-label {
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.trend-bar-value {
+  font-size: 0.55rem;
+  font-weight: 700;
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.trend-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--text-heading);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 0.85rem;
+  z-index: 400;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+  font-family: var(--font);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== 每日食谱 ===== */
+.mealplan-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.mealplan-header {
+  text-align: center;
+  padding-bottom: 8px;
+}
+.mealplan-header h3 { font-size: 1.2rem; color: var(--text-heading); }
+.mealplan-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.mealplan-day-section {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+.mealplan-day-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+.mealplan-items {
+  min-height: 20px;
+  margin-bottom: 8px;
+}
+.mealplan-add-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.mealplan-add-row input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background: #fff;
+  color: var(--text-primary);
+  font-family: var(--font);
+  outline: none;
+}
+.mealplan-add-row input[type="number"] {
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background: #fff;
+  color: var(--text-primary);
+  font-family: var(--font);
+  outline: none;
+}
+.mealplan-add-row input:focus { border-color: var(--accent); }
+.mealplan-add-row button {
+  padding: 8px 16px;
+  background: var(--accent);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.85rem;
+}
+.mealplan-summary {
+  text-align: center;
+  padding: 12px;
+  background: var(--accent-light);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+}
+.mealplan-summary strong { color: var(--accent); font-size: 1.2rem; }
+.mealplan-presets { margin-top: 8px; }
+.mealplan-presets h4 {
+  font-size: 0.95rem;
+  color: var(--text-heading);
+  margin-bottom: 10px;
+}
+.preset-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.preset-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.preset-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.preset-card-name { font-weight: 700; font-size: 0.9rem; color: var(--text-heading); margin-bottom: 4px; }
+.preset-card-desc { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+.preset-apply-btn {
+  padding: 6px 16px;
+  background: var(--accent-light);
+  border: none;
+  border-radius: 15px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.preset-card:hover .preset-apply-btn { background: var(--accent); color: #fff; }
+
+/* ===== 自媒体助手 ===== */
+.media-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.media-header {
+  text-align: center;
+}
+.media-header h3 { font-size: 1.2rem; color: var(--text-heading); }
+.media-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.media-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.media-panel {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.media-panel h4 {
+  font-size: 0.95rem;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.media-refresh-btn {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 20px;
+  background: var(--accent-light);
+  border: none;
+  border-radius: 20px;
+  color: var(--accent);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font);
+}
+.media-refresh-btn:hover { background: var(--accent); color: #fff; }
+
+/* 热点话题 */
+.topic-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.topic-heat { font-size: 0.75rem; }
+.topic-tag {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #e65100;
+}
+.topic-platform {
+  font-size: 0.7rem;
+  background: #fce4ec;
+  color: #c62828;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.topic-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  width: 100%;
+  margin-top: 2px;
+}
+
+/* 灵感卡片 */
+.idea-card {
+  background: var(--bg-primary);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+}
+.idea-header {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.idea-type {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.idea-type.remix { background: #e8f5e9; color: #2e7d32; }
+.idea-type.original { background: #e3f2fd; color: #1565c0; }
+.idea-platform { font-size: 0.7rem; color: var(--text-muted); }
+.idea-difficulty { font-size: 0.65rem; color: var(--text-muted); margin-left: auto; }
+.idea-title { font-weight: 700; font-size: 0.9rem; color: var(--text-heading); margin-bottom: 4px; }
+.idea-desc { font-size: 0.78rem; color: var(--text-primary); margin-bottom: 6px; }
+.idea-shooting {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  background: #fff8e1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+/* 自媒体计划 */
+.media-plan-panel {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.media-plan-panel h4 {
+  font-size: 0.95rem;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+}
+.media-plan-input-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.media-plan-input-row input[type="text"] {
+  flex: 2;
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-family: var(--font);
+  outline: none;
+}
+.media-plan-input-row select, .media-plan-input-row input[type="date"] {
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: var(--font);
+  outline: none;
+  background: #fff;
+}
+.media-plan-input-row input:focus, .media-plan-input-row select:focus { border-color: var(--accent); }
+.media-plan-input-row button {
+  padding: 10px 18px;
+  background: var(--accent);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.85rem;
+}
+
+.media-plan-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+.media-plan-item.done .media-plan-text { text-decoration: line-through; color: var(--text-muted); }
+.media-plan-text { flex: 1; font-size: 0.85rem; }
+.media-plan-platform { font-size: 0.7rem; background: #fce4ec; color: #c62828; padding: 2px 8px; border-radius: 10px; }
+.media-plan-date { font-size: 0.7rem; color: var(--text-muted); }
+.media-plan-del { color: var(--danger); cursor: pointer; font-size: 0.9rem; }
+
+/* ===== 穿搭推荐 ===== */
+.outfit-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.outfit-header { text-align: center; }
+.outfit-header h3 { font-size: 1.2rem; color: var(--text-heading); }
+.outfit-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.outfit-body-info {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-light);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.body-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  text-align: center;
+}
+.body-stat {
+  padding: 10px 8px;
+  background: var(--accent-light);
+  border-radius: 10px;
+}
+.body-stat-label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 2px; }
+.body-stat-value { display: block; font-size: 1.1rem; font-weight: 700; color: var(--accent-dark); }
+.body-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-top: 10px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.outfit-seasons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.season-btn {
+  padding: 8px 18px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font);
+  transition: all 0.2s;
+}
+.season-btn.active, .season-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.outfit-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.outfit-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+.outfit-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.outfit-card-emoji { font-size: 2rem; margin-bottom: 6px; }
+.outfit-card-title { font-weight: 700; font-size: 0.95rem; color: var(--text-heading); margin-bottom: 6px; }
+.outfit-card-desc { font-size: 0.8rem; color: var(--text-primary); margin-bottom: 10px; line-height: 1.5; }
+.outfit-card-items, .outfit-card-colors {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.outfit-label { font-weight: 600; color: var(--accent); margin-right: 4px; }
+.outfit-card-tips {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #fff8e1;
+  border-radius: 8px;
+  font-size: 0.73rem;
+  color: #795548;
+  line-height: 1.5;
+}
+
+/* 穿搭SVG图片 */
+.outfit-card-img {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff5f7, #fff8e1);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.outfit-svg {
+  max-height: 140px;
+  width: auto;
+}
+.daily-badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: linear-gradient(135deg, #ff7eb3, #ff5c8a);
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.outfit-card.daily-pick {
+  border-color: var(--accent);
+  border-width: 2px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(255, 126, 179, 0.2);
+}
+
+/* 头像上传按钮 */
+.avatar-upload-row {
+  margin-bottom: 8px;
+}
+.avatar-upload-btn {
+  padding: 8px 16px;
+  background: var(--accent-light);
+  border: 2px dashed var(--accent);
+  border-radius: 20px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: var(--font);
+  width: 100%;
+}
+.avatar-upload-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ===== 财经投资 ===== */
+.invest-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.invest-header { text-align: center; }
+.invest-header h3 { font-size: 1.2rem; color: var(--text-heading); }
+.invest-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.invest-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* 市场快讯条 */
+.invest-news-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.invest-news-item {
+  flex: 1;
+  min-width: 250px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #fff8e1, #fff3e0);
+  border: 1px solid #ffe082;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: #e65100;
+  line-height: 1.4;
+  animation: newsFlash 0.5s ease;
+}
+@keyframes newsFlash {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 更新信息行 */
+.invest-update-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+.invest-refresh-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  box-shadow: 0 4px 12px rgba(255, 126, 179, 0.3);
+  transition: all 0.2s;
+}
+.invest-refresh-btn:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(255, 126, 179, 0.4); }
+.invest-refresh-btn:active { transform: scale(0.95); }
+
+/* 投资产品网格 */
+.invest-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.invest-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+.invest-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.invest-card.risk-lowest { border-left: 4px solid #7ecb76; }
+.invest-card.risk-low { border-left: 4px solid #ffb347; }
+.invest-card.risk-medium { border-left: 4px solid #ff7eb3; }
+
+.invest-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.invest-emoji { font-size: 1.8rem; }
+.invest-card-title-group { flex: 1; }
+.invest-card-name { font-weight: 700; font-size: 0.9rem; color: var(--text-heading); }
+.invest-card-category { font-size: 0.7rem; color: var(--text-muted); }
+.invest-min {
+  font-size: 0.7rem;
+  background: var(--success-light);
+  color: #3d8b37;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.invest-card-body { display: flex; flex-direction: column; gap: 8px; }
+.invest-desc { font-size: 0.8rem; color: var(--text-primary); line-height: 1.5; }
+.invest-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.invest-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+.invest-value { font-size: 0.78rem; color: var(--text-primary); text-align: right; flex: 1; margin-left: 10px; }
+.invest-value.trend { color: #e65100; }
+.invest-tips {
+  margin-top: 4px;
+  padding: 8px 10px;
+  background: #fff3e0;
+  border-radius: 8px;
+  font-size: 0.73rem;
+  color: #e65100;
+  line-height: 1.5;
+}
+.invest-disclaimer {
+  text-align: center;
+  padding: 12px;
+  background: #fff8e1;
+  border-radius: 10px;
+  font-size: 0.73rem;
+  color: #8d6e63;
+  line-height: 1.5;
+}
+
+/* ===== 健身计划 ===== */
+.fitness-layout { display: flex; flex-direction: column; gap: 16px; }
+.fitness-header { text-align: center; }
+.fitness-header h3 { font-size: 1.2rem; color: var(--text-heading); }
+.fitness-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.fitness-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fitness-date-row h4 { font-size: 1rem; color: var(--text-heading); min-width: 140px; text-align: center; }
+.fitness-date-row button {
+  padding: 8px 16px;
+  border: 2px solid var(--accent-light);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: var(--font);
+  font-weight: 600;
+}
+.fitness-refresh-btn {
+  background: var(--accent) !important;
+  color: #fff !important;
+  border-color: var(--accent) !important;
+}
+
+.fitness-plan-card {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-light);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.fitness-plan-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 2px dashed var(--accent-light);
+}
+.fitness-plan-emoji { font-size: 2.5rem; }
+.fitness-plan-info { flex: 1; }
+.fitness-plan-name { font-size: 1.1rem; font-weight: 700; color: var(--text-heading); }
+.fitness-plan-meta { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.fitness-meta-tag {
+  font-size: 0.72rem;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.fitness-phase {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--bg-primary);
+  border-radius: 10px;
+}
+.fitness-phase-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+.fitness-phase-content { font-size: 0.8rem; color: var(--text-primary); }
+
+.fitness-exercise-list {
+  margin-bottom: 12px;
+}
+.fitness-exercise-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+}
+.fitness-ex-icon { font-size: 1.2rem; }
+.fitness-ex-name { flex: 1; font-weight: 600; color: var(--text-heading); }
+.fitness-ex-sets { color: var(--accent); font-weight: 700; font-size: 0.78rem; }
+.fitness-ex-rest { color: var(--text-muted); font-size: 0.72rem; }
+
+.fitness-plan-tips {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #e8f5e9;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: #2e7d32;
+  line-height: 1.5;
+}
+
+.fitness-tips { margin-top: 4px; }
+.fitness-tips h4 { font-size: 0.95rem; color: var(--text-heading); margin-bottom: 10px; }
+.fitness-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.fitness-tip-item {
+  padding: 10px 12px;
+  background: #fff8e1;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: #795548;
+  line-height: 1.4;
+}
+
+/* ===== 数据同步 ===== */
+.sync-layout { display: flex; flex-direction: column; gap: 20px; }
+.sync-header { text-align: center; }
+.sync-header h3 { font-size: 1.2rem; color: var(--text-heading); }
+.sync-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+.sync-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.sync-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sync-card-icon { font-size: 2.5rem; }
+.sync-card h4 { font-size: 1rem; color: var(--text-heading); }
+.sync-card p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; flex: 1; }
+
+.sync-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.2s;
+}
+.sync-btn.export { background: #e3f2fd; color: #1565c0; }
+.sync-btn.import { background: #e8f5e9; color: #2e7d32; }
+.sync-btn.generate { background: var(--accent-light); color: var(--accent-dark); }
+.sync-btn.apply { background: #fff3e0; color: #e65100; }
+.sync-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+
+.sync-code-area {
+  display: flex;
+  gap: 6px;
+}
+.sync-code-area input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-family: monospace;
+  outline: none;
+  background: #fff;
+}
+.sync-code-area input:focus { border-color: var(--accent); }
+
+.sync-status { text-align: center; }
+.sync-msg {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.sync-msg.success { background: #e8f5e9; color: #2e7d32; }
+.sync-msg.error { background: #ffebee; color: #c62828; }
+.sync-msg.info { background: #e3f2fd; color: #1565c0; }
+
+/* ===== 响应式：移动端 ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .menu-toggle { display: flex; align-items: center; justify-content: center; }
+  .main-area {
+    margin-left: 0;
+    padding: 16px 12px;
+    padding-top: 60px;
+  }
+  .diet-meals { grid-template-columns: 1fr; }
+  .trends-layout { grid-template-columns: 1fr; }
+  .media-columns { grid-template-columns: 1fr; }
+  .outfit-cards { grid-template-columns: 1fr; }
+  .invest-cards { grid-template-columns: 1fr; }
+  .invest-grid { grid-template-columns: 1fr; }
+  .fitness-tips-grid { grid-template-columns: 1fr; }
+  .sync-cards { grid-template-columns: 1fr; }
+  .preset-cards { grid-template-columns: 1fr; }
+  .body-card { grid-template-columns: repeat(2, 1fr); }
+  .finance-summary-row { grid-template-columns: 1fr 1fr 1fr; }
+  .calendar-cell { min-height: 44px; padding: 2px; }
+  .cell-date { font-size: 0.7rem; }
+  .cell-icons { font-size: 0.5rem; }
+  .cell-weight-diff { font-size: 0.5rem; }
+  .finance-add-form { flex-direction: column; }
+  .cal-title { font-size: 1.1rem; min-width: auto; }
+}
+
+@media (max-width: 400px) {
+  .calendar-cell { min-height: 36px; }
+  .cell-date { font-size: 0.65rem; }
+  .cell-icons { font-size: 0.45rem; }
+  .cell-weight-diff { font-size: 0.45rem; }
+}
+
+</style>
+</head>
+<body>
+  <div id="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+      <!-- 个人信息 -->
+      <div class="profile-section">
+        <div class="profile-avatar" id="profile-avatar" onclick="App.openProfileEditor()">
+          <span id="avatar-emoji">🐱</span>
+          <div class="avatar-edit-hint">编辑</div>
+        </div>
+        <div class="profile-info">
+          <h3 id="profile-name" class="profile-name">小可爱</h3>
+          <p id="profile-signature" class="profile-signature">✨ 每一天都值得记录</p>
+        </div>
+        <div class="checkin-stats">
+          <div class="checkin-item">
+            <span class="checkin-label">📅 本月打卡</span>
+            <span class="checkin-value" id="checkin-total">0 天</span>
+          </div>
+          <div class="checkin-item">
+            <span class="checkin-label">🔥 连续打卡</span>
+            <span class="checkin-value" id="checkin-streak">0 天</span>
+          </div>
+        </div>
+        <button class="checkin-btn" id="checkin-btn" onclick="App.todayCheckin()">🌟 今日打卡</button>
+      </div>
+
+      <!-- 电子宠物 - 小豆 (Hello Kitty风格) -->
+      <div class="pet-section" id="pet-section">
+        <div class="pet-display" onclick="Pet.feed()">
+          <svg class="pet-svg" viewBox="0 0 120 140" id="pet-svg">
+            <!-- 蝴蝶结 -->
+            <g transform="translate(60, 12)">
+              <ellipse cx="-14" cy="0" rx="10" ry="7" fill="#ff7eb3"/>
+              <ellipse cx="14" cy="0" rx="10" ry="7" fill="#ff7eb3"/>
+              <circle cx="0" cy="0" r="5" fill="#ff5c8a"/>
+            </g>
+            <!-- 头 -->
+            <ellipse cx="60" cy="55" rx="38" ry="35" fill="#fff" stroke="#f0dce2" stroke-width="2"/>
+            <!-- 耳朵 -->
+            <polygon points="28,28 22,8 38,20" fill="#fff" stroke="#f0dce2" stroke-width="2"/>
+            <polygon points="92,28 98,8 82,20" fill="#fff" stroke="#f0dce2" stroke-width="2"/>
+            <polygon points="30,26 26,14 36,22" fill="#ffe0eb"/>
+            <polygon points="90,26 94,14 84,22" fill="#ffe0eb"/>
+            <!-- 眼睛 -->
+            <ellipse cx="48" cy="50" rx="5" ry="6" fill="#333"/>
+            <ellipse cx="72" cy="50" rx="5" ry="6" fill="#333"/>
+            <circle cx="50" cy="48" r="1.5" fill="#fff"/>
+            <circle cx="74" cy="48" r="1.5" fill="#fff"/>
+            <!-- 鼻子 -->
+            <ellipse cx="60" cy="60" rx="4" ry="3" fill="#ffcc00"/>
+            <!-- 胡须 -->
+            <line x1="36" y1="58" x2="16" y2="54" stroke="#ddd" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="36" y1="62" x2="16" y2="64" stroke="#ddd" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="84" y1="58" x2="104" y2="54" stroke="#ddd" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="84" y1="62" x2="104" y2="64" stroke="#ddd" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- 腮红 -->
+            <circle cx="38" cy="65" r="6" fill="#ffe0eb" opacity="0.6"/>
+            <circle cx="82" cy="65" r="6" fill="#ffe0eb" opacity="0.6"/>
+            <!-- 身体 -->
+            <ellipse cx="60" cy="110" rx="28" ry="22" fill="#fff" stroke="#f0dce2" stroke-width="2"/>
+            <!-- 脚 -->
+            <ellipse cx="45" cy="130" rx="10" ry="6" fill="#fff" stroke="#f0dce2" stroke-width="1.5"/>
+            <ellipse cx="75" cy="130" rx="10" ry="6" fill="#fff" stroke="#f0dce2" stroke-width="1.5"/>
+            <!-- 衣服蝴蝶结 -->
+            <g transform="translate(60, 105)">
+              <ellipse cx="-6" cy="0" rx="6" ry="4" fill="#ff7eb3"/>
+              <ellipse cx="6" cy="0" rx="6" ry="4" fill="#ff7eb3"/>
+              <circle cx="0" cy="0" r="3" fill="#ff5c8a"/>
+            </g>
+            <!-- 尾巴 -->
+            <path d="M88,115 Q100,108 95,100" stroke="#f0dce2" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="pet-name">小豆</div>
+          <div class="pet-status">
+            <div class="pet-stat"><span>🍎</span><span id="pet-hunger">100</span>%</div>
+            <div class="pet-stat"><span>😊</span><span id="pet-mood">100</span>%</div>
+          </div>
+          <div class="pet-hint">点我喂食~</div>
+        </div>
+        <div class="pet-speech" id="pet-speech">今天也要加油哦~</div>
+      </div>
+
+      <!-- 导航 -->
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="calendar" onclick="App.switchTab('calendar')"><span>📅</span> 日历</button>
+        <button class="nav-item" data-tab="diet" onclick="App.switchTab('diet')"><span>🍱</span> 饮食记录</button>
+        <button class="nav-item" data-tab="mealplan" onclick="App.switchTab('mealplan')"><span>📋</span> 每日食谱</button>
+        <button class="nav-item" data-tab="media" onclick="App.switchTab('media')"><span>🎬</span> 自媒体助手</button>
+        <button class="nav-item" data-tab="outfit" onclick="App.switchTab('outfit')"><span>👗</span> 穿搭推荐</button>
+        <button class="nav-item" data-tab="invest" onclick="App.switchTab('invest')"><span>📈</span> 理财投资</button>
+        <button class="nav-item" data-tab="fitness" onclick="App.switchTab('fitness')"><span>🏋️</span> 健身计划</button>
+        <button class="nav-item" data-tab="finance" onclick="App.switchTab('finance')"><span>💰</span> 收支记账</button>
+        <button class="nav-item" data-tab="trends" onclick="App.switchTab('trends')"><span>📊</span> 趋势统计</button>
+        <button class="nav-item" data-tab="sync" onclick="App.switchTab('sync')"><span>☁️</span> 数据同步</button>
+      </nav>
+
+      <div class="sidebar-footer"><p>🌸 数据存于本地浏览器</p></div>
+    </aside>
+
+    <button class="menu-toggle" id="menu-toggle" onclick="App.toggleSidebar()">☰</button>
+
+    <!-- 主内容区 -->
+    <main class="main-area">
+      <!-- Tab: 日历 -->
+      <section class="tab-content active" id="tab-calendar">
+        <div class="calendar-header">
+          <button class="cal-nav-btn" onclick="Calendar.prevMonth()">◀</button>
+          <h2 class="cal-title" id="cal-title">2026年 8月</h2>
+          <button class="cal-nav-btn" onclick="Calendar.nextMonth()">▶</button>
+          <button class="cal-today-btn" onclick="Calendar.goToday()">今天</button>
+        </div>
+        <div class="calendar-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+        <div class="calendar-legend"><span>🩸 经期</span><span>💪 运动</span><span>💩 排便</span><span>±0.0 体重差</span></div>
+      </section>
+
+      <!-- Tab: 饮食记录 -->
+      <section class="tab-content" id="tab-diet">
+        <div class="diet-layout">
+          <div class="diet-date-header">
+            <button onclick="Diet.prevDay()">◀</button>
+            <h3 id="diet-date-title">2026年8月1日</h3>
+            <button onclick="Diet.nextDay()">▶</button>
+          </div>
+          <div class="diet-meals">
+            <div class="meal-card" data-meal="breakfast"><div class="meal-header">🌅 早餐</div><div class="meal-items" id="meal-breakfast"></div><div class="meal-add-row"><input type="text" placeholder="比如：一碗面、一个鸡蛋" id="meal-input-breakfast"><input type="file" accept="image/*" capture="environment" class="meal-photo-input" id="meal-photo-breakfast" onchange="Diet.uploadPhoto('breakfast', this)"><button class="meal-photo-btn" onclick="document.getElementById('meal-photo-breakfast').click()">📷</button><button onclick="Diet.addFood('breakfast')">+</button></div></div>
+            <div class="meal-card" data-meal="lunch"><div class="meal-header">☀️ 午餐</div><div class="meal-items" id="meal-lunch"></div><div class="meal-add-row"><input type="text" placeholder="比如：宫保鸡丁、米饭" id="meal-input-lunch"><input type="file" accept="image/*" capture="environment" class="meal-photo-input" id="meal-photo-lunch" onchange="Diet.uploadPhoto('lunch', this)"><button class="meal-photo-btn" onclick="document.getElementById('meal-photo-lunch').click()">📷</button><button onclick="Diet.addFood('lunch')">+</button></div></div>
+            <div class="meal-card" data-meal="dinner"><div class="meal-header">🌙 晚餐</div><div class="meal-items" id="meal-dinner"></div><div class="meal-add-row"><input type="text" placeholder="比如：沙拉、鸡胸肉" id="meal-input-dinner"><input type="file" accept="image/*" capture="environment" class="meal-photo-input" id="meal-photo-dinner" onchange="Diet.uploadPhoto('dinner', this)"><button class="meal-photo-btn" onclick="document.getElementById('meal-photo-dinner').click()">📷</button><button onclick="Diet.addFood('dinner')">+</button></div></div>
+            <div class="meal-card" data-meal="snack"><div class="meal-header">🍪 零食</div><div class="meal-items" id="meal-snack"></div><div class="meal-add-row"><input type="text" placeholder="比如：薯片、巧克力" id="meal-input-snack"><input type="file" accept="image/*" capture="environment" class="meal-photo-input" id="meal-photo-snack" onchange="Diet.uploadPhoto('snack', this)"><button class="meal-photo-btn" onclick="document.getElementById('meal-photo-snack').click()">📷</button><button onclick="Diet.addFood('snack')">+</button></div></div>
+          </div>
+          <div class="diet-summary" id="diet-summary"><div class="diet-cal-total">今日摄入：<strong id="diet-total-cal">0</strong> kcal</div></div>
+          <div class="diet-extra">
+            <button class="diet-summary-btn" onclick="App.switchTabAndShowSummary()">📋 当月饮食总结</button>
+            <button class="diet-history-btn" onclick="Diet.showHistory()">📜 历史菜谱</button>
+          </div>
+        </div>
+        <div class="diet-monthly-panel" id="diet-monthly-panel" style="display:none;"></div>
+      </section>
+
+      <!-- Tab: 每日食谱 -->
+      <section class="tab-content" id="tab-mealplan">
+        <div class="mealplan-layout">
+          <div class="mealplan-header"><h3>📋 每日食谱定制</h3><p class="mealplan-subtitle">定制你的专属每日饮食计划</p></div>
+          <div class="mealplan-day-section"><h4 class="mealplan-day-title">🌅 早餐计划</h4><div class="mealplan-items" id="mp-breakfast"></div><div class="mealplan-add-row"><input type="text" placeholder="如：全麦面包+牛奶+鸡蛋" id="mp-input-breakfast"><input type="number" placeholder="kcal" id="mp-cal-breakfast" style="width:70px;" min="0"><button onclick="MealPlan.add('breakfast')">+</button></div></div>
+          <div class="mealplan-day-section"><h4 class="mealplan-day-title">☀️ 午餐计划</h4><div class="mealplan-items" id="mp-lunch"></div><div class="mealplan-add-row"><input type="text" placeholder="如：鸡胸肉+西兰花+糙米饭" id="mp-input-lunch"><input type="number" placeholder="kcal" id="mp-cal-lunch" style="width:70px;" min="0"><button onclick="MealPlan.add('lunch')">+</button></div></div>
+          <div class="mealplan-day-section"><h4 class="mealplan-day-title">🌙 晚餐计划</h4><div class="mealplan-items" id="mp-dinner"></div><div class="mealplan-add-row"><input type="text" placeholder="如：蒸鱼+蔬菜沙拉" id="mp-input-dinner"><input type="number" placeholder="kcal" id="mp-cal-dinner" style="width:70px;" min="0"><button onclick="MealPlan.add('dinner')">+</button></div></div>
+          <div class="mealplan-day-section"><h4 class="mealplan-day-title">🍪 加餐计划</h4><div class="mealplan-items" id="mp-snack"></div><div class="mealplan-add-row"><input type="text" placeholder="如：酸奶+坚果" id="mp-input-snack"><input type="number" placeholder="kcal" id="mp-cal-snack" style="width:70px;" min="0"><button onclick="MealPlan.add('snack')">+</button></div></div>
+          <div class="mealplan-summary"><span>📊 计划总摄入：<strong id="mp-total-cal">0</strong> kcal</span></div>
+          <div class="mealplan-presets"><h4>🍽️ 快速套用预设</h4><div class="preset-cards" id="preset-cards"></div></div>
+        </div>
+      </section>
+
+      <!-- Tab: 自媒体助手 -->
+      <section class="tab-content" id="tab-media">
+        <div class="media-layout">
+          <div class="media-header"><h3>🎬 自媒体创作助手</h3><p class="media-subtitle">抖音 × 小红书热点追踪 · 二创灵感</p></div>
+          <div class="media-columns">
+            <!-- 热点追踪 -->
+            <div class="media-panel">
+              <h4>🔥 今日热门话题</h4>
+              <div class="hot-topics" id="hot-topics"></div>
+              <button class="media-refresh-btn" onclick="MediaHelper.refreshTopics()">🔄 刷新热点</button>
+            </div>
+            <!-- 二创灵感 -->
+            <div class="media-panel">
+              <h4>💡 二创灵感 & 拍摄建议</h4>
+              <div class="idea-list" id="idea-list"></div>
+              <button class="media-refresh-btn" onclick="MediaHelper.refreshIdeas()">🎲 换一批灵感</button>
+            </div>
+          </div>
+          <!-- 自媒体计划 -->
+          <div class="media-plan-panel">
+            <h4>📝 我的自媒体计划</h4>
+            <div class="media-plan-input-row">
+              <input type="text" id="media-plan-input" placeholder="添加拍摄计划…">
+              <select id="media-plan-platform">
+                <option value="douyin">抖音</option>
+                <option value="xiaohongshu">小红书</option>
+                <option value="both">双平台</option>
+              </select>
+              <input type="date" id="media-plan-date">
+              <button onclick="MediaHelper.addPlan()">+ 添加</button>
+            </div>
+            <div class="media-plan-list" id="media-plan-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: 穿搭推荐 -->
+      <section class="tab-content" id="tab-outfit">
+        <div class="outfit-layout">
+          <div class="outfit-header">
+            <h3>👗 穿搭推荐</h3>
+            <p class="outfit-subtitle">根据你的身高 168cm / 体重 55kg 智能推荐</p>
+          </div>
+          <div class="outfit-body-info">
+            <div class="body-card">
+              <div class="body-stat"><span class="body-stat-label">身高</span><span class="body-stat-value">168cm</span></div>
+              <div class="body-stat"><span class="body-stat-label">体重</span><span class="body-stat-value">55kg</span></div>
+              <div class="body-stat"><span class="body-stat-label">BMI</span><span class="body-stat-value">19.5</span></div>
+              <div class="body-stat"><span class="body-stat-label">身型</span><span class="body-stat-value">标准偏瘦</span></div>
+            </div>
+            <p class="body-note">✨ BMI 19.5 属于标准偏瘦体型，身材比例优秀，穿搭选择空间很大！</p>
+          </div>
+          <div class="outfit-seasons">
+            <button class="season-btn active" onclick="Outfit.switchSeason('summer')">☀️ 夏季</button>
+            <button class="season-btn" onclick="Outfit.switchSeason('spring')">🌸 春秋</button>
+            <button class="season-btn" onclick="Outfit.switchSeason('winter')">❄️ 冬季</button>
+            <button class="season-btn" onclick="Outfit.switchSeason('work')">💼 通勤</button>
+            <button class="season-btn" onclick="Outfit.switchSeason('date')">💕 约会</button>
+          </div>
+          <div class="outfit-cards" id="outfit-cards"></div>
+        </div>
+      </section>
+
+      <!-- Tab: 财经投资 -->
+      <section class="tab-content" id="tab-invest">
+        <div class="invest-layout">
+          <div class="invest-header">
+            <h3>📈 理财投资参考</h3>
+            <p class="invest-subtitle">支付宝小额理财推荐 · 风险提示 · 市场动态</p>
+          </div>
+          <div class="invest-cards" id="invest-cards"></div>
+          <div class="invest-disclaimer">
+            ⚠️ 仅供参考，不构成投资建议。投资有风险，入市需谨慎。建议从10元起小额试水，了解产品后再逐步增加。
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: 收支记账 -->
+      <section class="tab-content" id="tab-finance">
+        <div class="finance-layout">
+          <div class="finance-date-header"><button onclick="Finance.prevDay()">◀</button><h3 id="finance-date-title">2026年8月1日</h3><button onclick="Finance.nextDay()">▶</button></div>
+          <div class="finance-summary-row">
+            <div class="finance-summary-item income"><span>💰 本月收入</span><strong id="finance-month-income">¥0</strong></div>
+            <div class="finance-summary-item expense"><span>💸 本月支出</span><strong id="finance-month-expense">¥0</strong></div>
+            <div class="finance-summary-item balance"><span>🏦 本月结余</span><strong id="finance-month-balance">¥0</strong></div>
+          </div>
+          <div class="finance-add-form">
+            <input type="text" id="finance-desc" placeholder="说明"><input type="number" id="finance-amount" placeholder="金额" step="0.01">
+            <select id="finance-type"><option value="expense">支出</option><option value="income">收入</option></select>
+            <select id="finance-category"><option value="🍔 餐饮">🍔 餐饮</option><option value="🚗 交通">🚗 交通</option><option value="🛍️ 购物">🛍️ 购物</option><option value="🎮 娱乐">🎮 娱乐</option><option value="🏠 住房">🏠 住房</option><option value="💊 医疗">💊 医疗</option><option value="🎁 礼物">🎁 礼物</option><option value="💼 工资">💼 工资</option><option value="📈 投资">📈 投资</option><option value="📝 其他">📝 其他</option></select>
+            <button onclick="Finance.add()">添加</button>
+          </div>
+          <div class="finance-list" id="finance-list"></div>
+        </div>
+      </section>
+
+      <!-- Tab: 趋势统计 -->
+      <section class="tab-content" id="tab-trends">
+        <div class="trends-layout">
+          <div class="trend-card"><h3>⚖️ 体重趋势</h3><div class="trend-chart" id="trend-weight"></div></div>
+          <div class="trend-card"><h3>🔥 运动趋势</h3><div class="trend-chart" id="trend-exercise"></div></div>
+          <div class="trend-card"><h3>💳 收支趋势</h3><div class="trend-chart" id="trend-finance"></div></div>
+          <div class="trend-card"><h3>🍱 热量摄入趋势</h3><div class="trend-chart" id="trend-calories"></div></div>
+        </div>
+      </section>
+
+      <!-- Tab: 健身计划 -->
+      <section class="tab-content" id="tab-fitness">
+        <div class="fitness-layout">
+          <div class="fitness-header">
+            <h3>🏋️ 每日健身计划</h3>
+            <p class="fitness-subtitle">今日训练安排 · 可刷新切换方案</p>
+          </div>
+          <div class="fitness-date-row">
+            <button onclick="Fitness.prevDay()">◀</button>
+            <h4 id="fitness-date-title">2026年8月1日</h4>
+            <button onclick="Fitness.nextDay()">▶</button>
+            <button class="fitness-refresh-btn" onclick="Fitness.refreshPlan()">🔄 换个方案</button>
+          </div>
+          <div class="fitness-cards" id="fitness-cards"></div>
+          <div class="fitness-tips">
+            <h4>💡 健身小贴士</h4>
+            <div class="fitness-tips-grid" id="fitness-tips-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: 数据同步 -->
+      <section class="tab-content" id="tab-sync">
+        <div class="sync-layout">
+          <div class="sync-header">
+            <h3>☁️ 多终端数据同步</h3>
+            <p class="sync-subtitle">在不同设备间同步你的所有数据</p>
+          </div>
+          <div class="sync-cards">
+            <div class="sync-card">
+              <div class="sync-card-icon">📤</div>
+              <h4>导出数据</h4>
+              <p>将所有数据打包导出为文件，在另一个设备上导入即可实现数据迁移。</p>
+              <button class="sync-btn export" onclick="Sync.exportData()">📥 导出全部数据</button>
+            </div>
+            <div class="sync-card">
+              <div class="sync-card-icon">📥</div>
+              <h4>导入数据</h4>
+              <p>选择之前导出的备份文件，恢复所有数据到当前设备。</p>
+              <input type="file" accept=".json" id="sync-import-file" onchange="Sync.importData(this)" style="display:none;">
+              <button class="sync-btn import" onclick="document.getElementById('sync-import-file').click()">📤 导入备份文件</button>
+            </div>
+            <div class="sync-card">
+              <div class="sync-card-icon">🔗</div>
+              <h4>生成同步码</h4>
+              <p>生成一个临时同步码，在另一台设备输入后即可自动同步数据（基于剪贴板）。</p>
+              <div class="sync-code-area">
+                <input type="text" id="sync-code-display" readonly placeholder="点击生成同步码">
+                <button class="sync-btn generate" onclick="Sync.generateCode()">🔑 生成同步码</button>
+              </div>
+              <div class="sync-code-area" style="margin-top:8px;">
+                <input type="text" id="sync-code-input" placeholder="输入对方设备的同步码">
+                <button class="sync-btn apply" onclick="Sync.applyCode()">📲 应用同步码</button>
+              </div>
+            </div>
+          </div>
+          <div class="sync-status" id="sync-status"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 日历日详情弹窗 -->
+  <div class="modal-overlay" id="day-modal" onclick="DayDetail.close(event)">
+    <div class="modal-content day-detail-modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3 id="day-modal-title">8月1日</h3><button class="modal-close" onclick="DayDetail.close()">✕</button></div>
+      <div class="day-detail-body">
+        <div class="detail-section"><h4>💪 运动记录</h4><div class="detail-row"><select id="exercise-type"><option value="aerobic">🤸 跳操 (400kcal/h)</option><option value="climb">⛰️ 爬坡 (550kcal/h)</option><option value="strength">🏋️ 力量训练 (300kcal/h)</option></select><input type="number" id="exercise-duration" placeholder="分钟" min="1" style="width:80px;"><button onclick="DayDetail.addExercise()">记录</button></div><div id="exercise-list" class="tag-list"></div></div>
+        <div class="detail-section"><h4>⚖️ 体重记录</h4><div class="detail-row"><input type="number" id="weight-input" placeholder="体重(kg)" step="0.1" min="30" max="200"><button onclick="DayDetail.recordWeight()">记录</button></div><div id="weight-display" style="font-size:0.9rem;color:var(--text-muted);margin-top:4px;"></div></div>
+        <div class="detail-section"><h4>💩 排便记录</h4><div class="detail-row"><label class="toggle-label"><input type="checkbox" id="bowel-toggle" onchange="DayDetail.toggleBowel()"><span>今天排便了</span></label></div></div>
+        <div class="detail-section"><h4>🩸 经期记录</h4><div class="detail-row"><label class="toggle-label"><input type="checkbox" id="period-toggle" onchange="DayDetail.togglePeriod()"><span>经期第1天（自动连续5天标记）</span></label></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 个人资料编辑弹窗 -->
+  <div class="modal-overlay" id="profile-modal" onclick="App.closeProfileEditor(event)">
+    <div class="modal-content profile-modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3>✏️ 编辑个人资料</h3><button class="modal-close" onclick="App.closeProfileEditor()">✕</button></div>
+      <div class="profile-edit-body">
+        <div class="form-group">
+          <label>选择头像</label>
+          <div class="avatar-upload-row">
+            <input type="file" accept="image/*" id="avatar-file-input" onchange="App.uploadAvatarPhoto(this)" style="display:none;">
+            <button class="avatar-upload-btn" onclick="document.getElementById('avatar-file-input').click()">📷 从相册选择</button>
+          </div>
+          <div class="avatar-picker" id="avatar-picker"></div>
+        </div>
+        <div class="form-group"><label>昵称</label><input type="text" id="edit-name" placeholder="你的昵称" maxlength="12"></div>
+        <div class="form-group"><label>个性签名</label><input type="text" id="edit-signature" placeholder="写一句签名吧~" maxlength="30"></div>
+        <button class="btn-primary" onclick="App.saveProfile()">💾 保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 饮食历史菜谱弹窗 -->
+  <div class="modal-overlay" id="diet-history-modal" onclick="Diet.closeHistory(event)">
+    <div class="modal-content diet-history-modal" onclick="event.stopPropagation()">
+      <div class="modal-header"><h3>📜 历史菜谱</h3><button class="modal-close" onclick="Diet.closeHistory()">✕</button></div>
+      <div class="diet-history-body" id="diet-history-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+// ===== 数据存储层 =====
+// 所有数据以 YYYY-MM-DD 为 key 存储
+const Storage = {
+  // 获取所有数据
+  getAll() {
+    try { return JSON.parse(localStorage.getItem('workbench_data') || '{}'); }
+    catch { return {}; }
+  },
+
+  // 保存所有数据
+  saveAll(data) {
+    localStorage.setItem('workbench_data', JSON.stringify(data));
+  },
+
+  // 获取某天数据
+  getDay(dateStr) { // dateStr: "2026-08-01"
+    const all = this.getAll();
+    return all[dateStr] || {};
+  },
+
+  // 保存某天数据
+  saveDay(dateStr, dayData) {
+    const all = this.getAll();
+    all[dateStr] = dayData;
+    this.saveAll(all);
+  },
+
+  // 更新某天部分字段
+  updateDay(dateStr, partial) {
+    const day = this.getDay(dateStr);
+    Object.assign(day, partial);
+    this.saveDay(dateStr, day);
+  },
+
+  // 获取个人资料
+  getProfile() {
+    try { return JSON.parse(localStorage.getItem('workbench_profile') || '{}'); }
+    catch { return {}; }
+  },
+
+  saveProfile(profile) {
+    localStorage.setItem('workbench_profile', JSON.stringify(profile));
+  },
+
+  // 获取打卡数据
+  getCheckins() {
+    try { return JSON.parse(localStorage.getItem('workbench_checkins') || '[]'); }
+    catch { return []; }
+  },
+
+  saveCheckins(list) {
+    localStorage.setItem('workbench_checkins', JSON.stringify(list));
+  }
+};
+
+</script>
+  <script>
+// ===== 日历模块 =====
+const Calendar = {
+  currentYear: new Date().getFullYear(),
+  currentMonth: new Date().getMonth() + 1, // 1-12
+
+  init() {
+    this.render();
+  },
+
+  prevMonth() {
+    if (this.currentMonth === 1) { this.currentYear--; this.currentMonth = 12; }
+    else this.currentMonth--;
+    this.render();
+  },
+
+  nextMonth() {
+    if (this.currentMonth === 12) { this.currentYear++; this.currentMonth = 1; }
+    else this.currentMonth++;
+    this.render();
+  },
+
+  goToday() {
+    const now = new Date();
+    this.currentYear = now.getFullYear();
+    this.currentMonth = now.getMonth() + 1;
+    this.render();
+  },
+
+  // 格式化日期
+  fmt(y, m, d) {
+    return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  },
+
+  // 获取某天的体重差（跟上一天比）
+  getWeightDiff(dateStr) {
+    const day = Storage.getDay(dateStr);
+    if (day.weight == null) return null;
+
+    // 找上一天
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const prevDate = new Date(y, m - 1, d - 1);
+    const prevStr = this.fmt(prevDate.getFullYear(), prevDate.getMonth() + 1, prevDate.getDate());
+    const prevDay = Storage.getDay(prevStr);
+    if (prevDay.weight == null) return null;
+
+    return day.weight - prevDay.weight;
+  },
+
+  // 检测某天是否在经期内
+  isPeriodDay(dateStr) {
+    // 查所有经期起始日
+    const all = Storage.getAll();
+    for (const [key, day] of Object.entries(all)) {
+      if (day.periodStart) {
+        const [sy, sm, sd] = key.split('-').map(Number);
+        const start = new Date(sy, sm - 1, sd);
+        const [ty, tm, td] = dateStr.split('-').map(Number);
+        const target = new Date(ty, tm - 1, td);
+        if (target >= start && target < new Date(start.getTime() + 5 * 86400000)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  },
+
+  render() {
+    document.getElementById('cal-title').textContent = `${this.currentYear}年 ${this.currentMonth}月`;
+
+    const grid = document.getElementById('calendar-grid');
+    const today = new Date();
+    const todayStr = this.fmt(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+    // 当月第一天是周几（0=日）
+    const firstDay = new Date(this.currentYear, this.currentMonth - 1, 1).getDay();
+    // 当月天数
+    const daysInMonth = new Date(this.currentYear, this.currentMonth, 0).getDate();
+    // 上月天数
+    const prevDays = new Date(this.currentYear, this.currentMonth - 1, 0).getDate();
+
+    let html = '';
+
+    // 填充上月尾巴
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const d = prevDays - i;
+      html += this.renderCell(this.currentYear, this.currentMonth - 1 || 12, d, true, todayStr);
+    }
+
+    // 当月
+    for (let d = 1; d <= daysInMonth; d++) {
+      html += this.renderCell(this.currentYear, this.currentMonth, d, false, todayStr);
+    }
+
+    // 填充下月开头
+    const totalCells = firstDay + daysInMonth;
+    const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    for (let d = 1; d <= remaining; d++) {
+      html += this.renderCell(this.currentYear, this.currentMonth + 1 > 12 ? 1 : this.currentMonth + 1, d, true, todayStr);
+    }
+
+    grid.innerHTML = html;
+  },
+
+  renderCell(year, month, day, isOther, todayStr) {
+    const dateStr = this.fmt(year, month, day);
+    const isToday = dateStr === todayStr;
+    const dayData = Storage.getDay(dateStr);
+    const diff = this.getWeightDiff(dateStr);
+    const isPeriod = this.isPeriodDay(dateStr);
+
+    // 图标
+    let icons = '';
+    if (isPeriod) icons += '🩸';
+    if (dayData.exercises && dayData.exercises.length > 0) icons += '💪';
+    if (dayData.bowel) icons += '💩';
+
+    // 体重差
+    let diffHtml = '';
+    if (diff !== null) {
+      const diffVal = Math.round(diff * 10) / 10;
+      if (diffVal > 0) diffHtml = `<span class="cell-weight-diff gain">+${diffVal.toFixed(1)}</span>`;
+      else if (diffVal < 0) diffHtml = `<span class="cell-weight-diff loss">${diffVal.toFixed(1)}</span>`;
+      else diffHtml = `<span class="cell-weight-diff zero">±0.0</span>`;
+    }
+
+    const classes = ['calendar-cell'];
+    if (isToday) classes.push('today');
+    if (isOther) classes.push('other-month');
+    if (isPeriod) classes.push('period');
+
+    return `
+      <div class="${classes.join(' ')}" onclick="${isOther ? '' : `DayDetail.open('${dateStr}')`}">
+        <span class="cell-date">${day}</span>
+        <span class="cell-icons">${icons}</span>
+        ${diffHtml}
+      </div>
+    `;
+  }
+};
+
+</script>
+  <script>
+// ===== 单日详情弹窗模块 =====
+const DayDetail = {
+  currentDate: '',
+
+  open(dateStr) {
+    this.currentDate = dateStr;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    document.getElementById('day-modal-title').textContent = `${m}月${d}日`;
+
+    const day = Storage.getDay(dateStr);
+
+    // 运动
+    this.renderExercises(day.exercises || []);
+
+    // 体重
+    document.getElementById('weight-input').value = '';
+    const weightDisplay = document.getElementById('weight-display');
+    if (day.weight != null) {
+      // 显示体重和差值
+      const diff = Calendar.getWeightDiff(dateStr);
+      let diffStr = '';
+      if (diff !== null) {
+        const dv = Math.round(diff * 10) / 10;
+        if (dv > 0) diffStr = `（比昨天重了 ${dv.toFixed(1)} kg 😅）`;
+        else if (dv < 0) diffStr = `（比昨天轻了 ${Math.abs(dv).toFixed(1)} kg 🎉）`;
+        else diffStr = `（和昨天一样 ⚖️）`;
+      }
+      weightDisplay.textContent = `当前记录：${day.weight} kg ${diffStr}`;
+    } else {
+      weightDisplay.textContent = '尚未记录体重';
+    }
+
+    // 排便
+    document.getElementById('bowel-toggle').checked = !!day.bowel;
+
+    // 经期
+    document.getElementById('period-toggle').checked = !!day.periodStart;
+
+    document.getElementById('day-modal').classList.add('show');
+  },
+
+  close(e) {
+    if (e && e.target !== document.getElementById('day-modal')) return;
+    document.getElementById('day-modal').classList.remove('show');
+    Calendar.render(); // 刷新日历
+  },
+
+  renderExercises(exercises) {
+    const el = document.getElementById('exercise-list');
+    el.innerHTML = exercises.map((ex, i) => `
+      <span class="tag">
+        ${ex.icon} ${ex.name} ${ex.duration}分钟 · ${ex.calories}kcal
+        <span class="tag-remove" onclick="DayDetail.removeExercise(${i})">×</span>
+      </span>
+    `).join('');
+  },
+
+  addExercise() {
+    const typeEl = document.getElementById('exercise-type');
+    const durEl = document.getElementById('exercise-duration');
+    const type = typeEl.value;
+    const duration = parseInt(durEl.value);
+
+    if (!duration || duration <= 0) { App.toast('请输入运动时长 ⏱️'); return; }
+
+    const exMap = {
+      aerobic: { name: '跳操', icon: '🤸', calPerH: 400 },
+      climb: { name: '爬坡', icon: '⛰️', calPerH: 550 },
+      strength: { name: '力量训练', icon: '🏋️', calPerH: 300 },
+    };
+    const ex = exMap[type];
+    const calories = Math.round(ex.calPerH * duration / 60);
+
+    const day = Storage.getDay(this.currentDate);
+    if (!day.exercises) day.exercises = [];
+    day.exercises.push({ type, name: ex.name, icon: ex.icon, duration, calories });
+    Storage.saveDay(this.currentDate, day);
+
+    durEl.value = '';
+    this.renderExercises(day.exercises);
+    App.toast(`已记录：${ex.icon} ${ex.name} ${duration}分钟 🔥${calories}kcal`);
+  },
+
+  removeExercise(index) {
+    const day = Storage.getDay(this.currentDate);
+    day.exercises.splice(index, 1);
+    Storage.saveDay(this.currentDate, day);
+    this.renderExercises(day.exercises);
+  },
+
+  recordWeight() {
+    const input = document.getElementById('weight-input');
+    const weight = parseFloat(input.value);
+    if (isNaN(weight) || weight <= 0) { App.toast('请输入有效体重 ⚖️'); return; }
+
+    Storage.updateDay(this.currentDate, { weight: Math.round(weight * 10) / 10 });
+    input.value = '';
+    App.toast(`体重已记录：${weight} kg ⚖️`);
+    this.open(this.currentDate); // 刷新
+  },
+
+  toggleBowel() {
+    const checked = document.getElementById('bowel-toggle').checked;
+    Storage.updateDay(this.currentDate, { bowel: checked });
+    App.toast(checked ? '💩 已标记排便' : '已取消排便标记');
+  },
+
+  togglePeriod() {
+    const checked = document.getElementById('period-toggle').checked;
+    Storage.updateDay(this.currentDate, { periodStart: checked });
+    App.toast(checked ? '🩸 已标记经期开始（连续5天）' : '已取消经期标记');
+    Calendar.render();
+  }
+};
+
+</script>
+  <script>
+// ===== 饮食记录模块 =====
+const Diet = {
+  currentDate: new Date(),
+
+  // 食物热量估算库（单位：kcal/份）
+  foodDB: {
+    // 主食
+    '面': 350, '面条': 350, '一碗面': 350, '拉面': 380, '意面': 320, '泡面': 450, '方便面': 450,
+    '米饭': 200, '一碗米饭': 200, '白米饭': 200, '糙米饭': 180, '炒饭': 400, '蛋炒饭': 400,
+    '馒头': 220, '包子': 200, '肉包': 250, '饺子': 300, '水饺': 300, '馄饨': 280,
+    '面包': 250, '吐司': 150, '全麦面包': 120, '牛角包': 280, '三明治': 350,
+    '粥': 100, '白粥': 100, '小米粥': 80, '皮蛋瘦肉粥': 200,
+    '饼': 300, '煎饼': 350, '葱油饼': 350, '手抓饼': 380,
+    '寿司': 300, '饭团': 250, '紫菜包饭': 280,
+
+    // 蛋白质
+    '鸡蛋': 70, '煮鸡蛋': 70, '煎蛋': 90, '炒蛋': 110, '荷包蛋': 90, '一个鸡蛋': 70,
+    '鸡胸肉': 130, '鸡腿': 180, '鸡肉': 200, '炸鸡': 350, '烤鸡': 250,
+    '猪肉': 250, '红烧肉': 400, '排骨': 280, '糖醋排骨': 350,
+    '牛肉': 200, '牛排': 300, '肥牛': 280, '牛肉面': 450,
+    '鱼': 120, '清蒸鱼': 130, '红烧鱼': 200, '烤鱼': 300, '三文鱼': 200,
+    '虾': 80, '虾仁': 80, '白灼虾': 80,
+    '豆腐': 80, '麻婆豆腐': 150, '豆浆': 60,
+    '牛奶': 120, '酸奶': 100, '奶酪': 100,
+
+    // 蔬菜
+    '沙拉': 80, '蔬菜沙拉': 80, '水果沙拉': 120,
+    '青菜': 30, '白菜': 30, '西兰花': 35, '菠菜': 25,
+    '番茄': 20, '西红柿': 20, '黄瓜': 15,
+    '玉米': 110, '红薯': 100, '土豆': 80, '薯条': 300,
+
+    // 水果
+    '苹果': 80, '香蕉': 100, '橙子': 60, '葡萄': 70, '西瓜': 50,
+    '草莓': 40, '蓝莓': 55, '芒果': 90, '猕猴桃': 50, '一个苹果': 80,
+
+    // 零食
+    '巧克力': 250, '薯片': 300, '饼干': 200, '蛋糕': 300, '冰淇淋': 200,
+    '奶茶': 350, '咖啡': 30, '拿铁': 150, '可乐': 140, '果汁': 120,
+    '坚果': 180, '瓜子': 150, '辣条': 200, '雪糕': 180,
+
+    // 菜肴
+    '宫保鸡丁': 350, '鱼香肉丝': 320, '回锅肉': 380, '水煮鱼': 350,
+    '麻婆豆腐': 150, '番茄炒蛋': 180, '酸辣土豆丝': 150,
+    '火锅': 600, '麻辣烫': 450, '烧烤': 500, '烤肉': 500,
+    '汉堡': 450, '薯条': 300, '炸鸡': 350, '披萨': 500,
+    '寿司': 300, '刺身': 150,
+  },
+
+  // 模糊匹配热量
+  estimateCalories(name) {
+    const n = name.trim().toLowerCase();
+    // 精确匹配
+    if (this.foodDB[n]) return this.foodDB[n];
+    // 部分匹配
+    for (const [key, cal] of Object.entries(this.foodDB)) {
+      if (n.includes(key) || key.includes(n)) return cal;
+    }
+    // 默认估算
+    return 200; // 无法识别时默认200kcal
+  },
+
+  init() {
+    this.updateDateDisplay();
+    this.loadDay();
+  },
+
+  fmt(y, m, d) {
+    return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  },
+
+  getDateStr() {
+    return this.fmt(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, this.currentDate.getDate());
+  },
+
+  updateDateDisplay() {
+    const d = this.currentDate;
+    document.getElementById('diet-date-title').textContent =
+      `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  },
+
+  prevDay() {
+    this.currentDate = new Date(this.currentDate.getTime() - 86400000);
+    this.updateDateDisplay();
+    this.loadDay();
+  },
+
+  nextDay() {
+    this.currentDate = new Date(this.currentDate.getTime() + 86400000);
+    this.updateDateDisplay();
+    this.loadDay();
+  },
+
+  loadDay() {
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    const diet = day.diet || { breakfast: [], lunch: [], dinner: [], snack: [] };
+
+    ['breakfast', 'lunch', 'dinner', 'snack'].forEach(meal => {
+      this.renderMeal(meal, diet[meal] || []);
+    });
+
+    this.updateTotal();
+  },
+
+  renderMeal(meal, items) {
+    const el = document.getElementById(`meal-${meal}`);
+    el.innerHTML = items.map((item, i) => `
+      <div class="meal-item">
+        ${item.photo ? `<img src="${item.photo}" class="meal-item-photo" onclick="Diet.viewPhoto('${item.photo}')">` : ''}
+        <span class="meal-item-name">${this.escape(item.name)}</span>
+        <span class="meal-item-cal">🔥${item.calories}kcal</span>
+        <span class="meal-item-del" onclick="Diet.removeFood('${meal}', ${i})">✕</span>
+      </div>
+    `).join('');
+  },
+
+  addFood(meal) {
+    const input = document.getElementById(`meal-input-${meal}`);
+    const name = input.value.trim();
+    if (!name) { App.toast('请输入食物名称 🍽️'); return; }
+
+    const calories = this.estimateCalories(name);
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    if (!day.diet) day.diet = { breakfast: [], lunch: [], dinner: [], snack: [] };
+    day.diet[meal].push({ name, calories });
+
+    // 检查是否有待处理的照片
+    if (this._pendingPhoto) {
+      day.diet[meal][day.diet[meal].length - 1].photo = this._pendingPhoto;
+      this._pendingPhoto = null;
+    }
+
+    Storage.saveDay(dateStr, day);
+    input.value = '';
+    this.renderMeal(meal, day.diet[meal]);
+    this.updateTotal();
+    App.toast(`已添加：${name} 🔥${calories}kcal`);
+  },
+
+  removeFood(meal, index) {
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    if (!day.diet) return;
+    day.diet[meal].splice(index, 1);
+    Storage.saveDay(dateStr, day);
+    this.renderMeal(meal, day.diet[meal]);
+    this.updateTotal();
+  },
+
+  uploadPhoto(meal, input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this._pendingPhoto = e.target.result;
+      App.toast('📷 照片已就绪，输入食物名称后添加');
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+  },
+
+  viewPhoto(src) {
+    window.open(src, '_blank');
+  },
+
+  updateTotal() {
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    const diet = day.diet || { breakfast: [], lunch: [], dinner: [], snack: [] };
+    let total = 0;
+    ['breakfast', 'lunch', 'dinner', 'snack'].forEach(meal => {
+      (diet[meal] || []).forEach(item => total += item.calories);
+    });
+    document.getElementById('diet-total-cal').textContent = total;
+  },
+
+  // 当月饮食总结
+  getMonthlySummary(year, month) {
+    const all = Storage.getAll();
+    const summary = { totalCal: 0, days: 0, foods: {} };
+    const prefix = `${year}-${String(month).padStart(2, '0')}`;
+
+    for (const [key, day] of Object.entries(all)) {
+      if (!key.startsWith(prefix)) continue;
+      const diet = day.diet;
+      if (!diet) continue;
+      summary.days++;
+      ['breakfast', 'lunch', 'dinner', 'snack'].forEach(meal => {
+        (diet[meal] || []).forEach(item => {
+          summary.totalCal += item.calories;
+          summary.foods[item.name] = (summary.foods[item.name] || 0) + 1;
+        });
+      });
+    }
+    return summary;
+  },
+
+  renderMonthlySummary() {
+    const now = new Date();
+    const summary = this.getMonthlySummary(now.getFullYear(), now.getMonth() + 1);
+    const panel = document.getElementById('diet-monthly-panel');
+
+    const topFoods = Object.entries(summary.foods)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10);
+
+    panel.style.display = 'block';
+    panel.innerHTML = `
+      <h4>📋 ${now.getMonth() + 1}月饮食总结</h4>
+      <p>记录天数：<strong>${summary.days}</strong> 天</p>
+      <p>当月总摄入：<strong style="color:var(--accent);">${summary.totalCal}</strong> kcal</p>
+      <p>日均摄入：<strong>${summary.days > 0 ? Math.round(summary.totalCal / summary.days) : 0}</strong> kcal</p>
+      <p style="margin-top:8px;font-size:0.85rem;color:var(--text-muted);">常吃食物 Top 10：</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${topFoods.map(([name, count]) => `<span class="tag">${name} ×${count}</span>`).join('')}
+      </div>
+      <button onclick="document.getElementById('diet-monthly-panel').style.display='none'" style="margin-top:10px;padding:6px 16px;border:2px solid var(--accent-light);border-radius:20px;background:#fff;color:var(--accent);cursor:pointer;">关闭</button>
+    `;
+  },
+
+  // 历史菜谱
+  showHistory() {
+    const all = Storage.getAll();
+    const history = []; // { date, meal, name, calories }
+
+    for (const [dateStr, day] of Object.entries(all)) {
+      if (!day.diet) continue;
+      ['breakfast', 'lunch', 'dinner', 'snack'].forEach(meal => {
+        (day.diet[meal] || []).forEach(item => {
+          history.push({ date: dateStr, meal, name: item.name, calories: item.calories });
+        });
+      });
+    }
+
+    history.sort((a, b) => b.date.localeCompare(a.date));
+
+    const body = document.getElementById('diet-history-body');
+    if (history.length === 0) {
+      body.innerHTML = '<p style="text-align:center;color:var(--text-muted);">还没有饮食记录哦~</p>';
+    } else {
+      const mealLabels = { breakfast: '🌅早', lunch: '☀️午', dinner: '🌙晚', snack: '🍪零' };
+      body.innerHTML = history.map(h => `
+        <div class="diet-history-item">
+          <span>${h.date} ${mealLabels[h.meal]} ${h.name}</span>
+          <span style="color:var(--accent);">🔥${h.calories}kcal</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('diet-history-modal').classList.add('show');
+  },
+
+  closeHistory(e) {
+    if (e && e.target !== document.getElementById('diet-history-modal')) return;
+    document.getElementById('diet-history-modal').classList.remove('show');
+  },
+
+  escape(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+};
+
+</script>
+  <script>
+// ===== 每日食谱模块 =====
+const MealPlan = {
+  storageKey: 'workbench_mealplan',
+
+  // 预设食谱模板
+  presets: [
+    {
+      name: '🥗 轻断食日',
+      desc: '低卡高蛋白，约800kcal',
+      meals: {
+        breakfast: [{ name: '黑咖啡+水煮蛋×2', calories: 150 }],
+        lunch: [{ name: '鸡胸肉沙拉', calories: 250 }],
+        dinner: [{ name: '蒸鱼+西兰花', calories: 250 }],
+        snack: [{ name: '苹果一个', calories: 80 }],
+      }
+    },
+    {
+      name: '🍚 均衡营养日',
+      desc: '碳水蛋白均衡，约1400kcal',
+      meals: {
+        breakfast: [{ name: '全麦面包+牛奶+鸡蛋', calories: 350 }],
+        lunch: [{ name: '糙米饭+炒青菜+鸡腿', calories: 500 }],
+        dinner: [{ name: '豆腐汤+凉拌黄瓜+小碗米饭', calories: 400 }],
+        snack: [{ name: '酸奶+坚果', calories: 200 }],
+      }
+    },
+    {
+      name: '💪 高蛋白增肌日',
+      desc: '高蛋白低碳水，约1600kcal',
+      meals: {
+        breakfast: [{ name: '燕麦+蛋白粉+香蕉', calories: 400 }],
+        lunch: [{ name: '牛排+红薯+菠菜', calories: 600 }],
+        dinner: [{ name: '三文鱼+藜麦沙拉', calories: 450 }],
+        snack: [{ name: '蛋白棒+希腊酸奶', calories: 200 }],
+      }
+    },
+    {
+      name: '🌿 素食日',
+      desc: '纯素营养，约1200kcal',
+      meals: {
+        breakfast: [{ name: '豆浆+全麦馒头+凉拌时蔬', calories: 300 }],
+        lunch: [{ name: '豆腐炒菌菇+杂粮饭', calories: 450 }],
+        dinner: [{ name: '蔬菜汤+蒸红薯', calories: 300 }],
+        snack: [{ name: '水果拼盘', calories: 150 }],
+      }
+    },
+  ],
+
+  init() {
+    this.renderPresets();
+    this.loadPlan();
+  },
+
+  getPlan() {
+    try { return JSON.parse(localStorage.getItem(this.storageKey) || '{}'); }
+    catch { return {}; }
+  },
+
+  savePlan(plan) {
+    localStorage.setItem(this.storageKey, JSON.stringify(plan));
+  },
+
+  add(meal) {
+    const input = document.getElementById(`mp-input-${meal}`);
+    const calInput = document.getElementById(`mp-cal-${meal}`);
+    const name = input.value.trim();
+    let calories = parseInt(calInput.value);
+
+    if (!name) { App.toast('请输入食物名称 📝'); return; }
+    if (isNaN(calories) || calories < 0) {
+      calories = Diet.estimateCalories(name);
+    }
+
+    const plan = this.getPlan();
+    if (!plan[meal]) plan[meal] = [];
+    plan[meal].push({ name, calories });
+    this.savePlan(plan);
+
+    input.value = '';
+    calInput.value = '';
+    this.renderMeal(meal);
+    this.updateTotal();
+    App.toast(`已添加：${name} 🔥${calories}kcal`);
+  },
+
+  remove(meal, index) {
+    const plan = this.getPlan();
+    if (!plan[meal]) return;
+    plan[meal].splice(index, 1);
+    this.savePlan(plan);
+    this.renderMeal(meal);
+    this.updateTotal();
+  },
+
+  renderMeal(meal) {
+    const plan = this.getPlan();
+    const items = plan[meal] || [];
+    const el = document.getElementById(`mp-${meal}`);
+    el.innerHTML = items.map((item, i) => `
+      <div class="meal-item">
+        <span class="meal-item-name">${this.escape(item.name)}</span>
+        <span class="meal-item-cal">🔥${item.calories}kcal</span>
+        <span class="meal-item-del" onclick="MealPlan.remove('${meal}', ${i})">✕</span>
+      </div>
+    `).join('');
+  },
+
+  loadPlan() {
+    ['breakfast', 'lunch', 'dinner', 'snack'].forEach(m => this.renderMeal(m));
+    this.updateTotal();
+  },
+
+  updateTotal() {
+    const plan = this.getPlan();
+    let total = 0;
+    ['breakfast', 'lunch', 'dinner', 'snack'].forEach(meal => {
+      (plan[meal] || []).forEach(item => total += item.calories);
+    });
+    document.getElementById('mp-total-cal').textContent = total;
+  },
+
+  applyPreset(index) {
+    const preset = this.presets[index];
+    this.savePlan(JSON.parse(JSON.stringify(preset.meals)));
+    this.loadPlan();
+    App.toast(`✅ 已套用「${preset.name}」`);
+  },
+
+  renderPresets() {
+    const el = document.getElementById('preset-cards');
+    el.innerHTML = this.presets.map((p, i) => `
+      <div class="preset-card" onclick="MealPlan.applyPreset(${i})">
+        <div class="preset-card-name">${p.name}</div>
+        <div class="preset-card-desc">${p.desc}</div>
+        <button class="preset-apply-btn">套用</button>
+      </div>
+    `).join('');
+  },
+
+  escape(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+};
+
+</script>
+  <script>
+// ===== 自媒体助手模块 =====
+const MediaHelper = {
+  // 抖音+小红书热门话题池
+  topics: [
+    { tag: '#我的日常vlog', platform: 'douyin', heat: '🔥🔥🔥', desc: '记录一天的真实生活，素人vlog超容易火' },
+    { tag: '#挑战100天变美', platform: 'douyin', heat: '🔥🔥🔥', desc: '变美打卡类内容持续高热度' },
+    { tag: '#普通人的穿搭', platform: 'xiaohongshu', heat: '🔥🔥🔥', desc: '168cm穿搭分享超受欢迎' },
+    { tag: '#打工人午餐', platform: 'douyin', heat: '🔥🔥', desc: '带饭/外卖记录类内容稳定流量' },
+    { tag: '#减肥日记', platform: 'douyin', heat: '🔥🔥🔥', desc: '真实减肥过程记录，容易涨粉' },
+    { tag: '#沉浸式回家', platform: 'douyin', heat: '🔥🔥', desc: '下班后的治愈时刻，拍摄门槛低' },
+    { tag: '#独居女孩日常', platform: 'xiaohongshu', heat: '🔥🔥🔥', desc: '布置房间、做饭、生活的治愈感' },
+    { tag: '#一周穿搭不重样', platform: 'xiaohongshu', heat: '🔥🔥', desc: '利用现有衣服做搭配，实用性强' },
+    { tag: '#省钱小妙招', platform: 'douyin', heat: '🔥🔥', desc: '记账/省钱类内容长期有需求' },
+    { tag: '#跟着博主学拍照', platform: 'xiaohongshu', heat: '🔥🔥', desc: '拍照姿势教学，容易涨收藏' },
+    { tag: '#一人食', platform: 'douyin', heat: '🔥🔥🔥', desc: '一个人做饭吃饭，治愈系内容' },
+    { tag: '#素人改造', platform: 'douyin', heat: '🔥🔥🔥', desc: '从普通到惊艳的反差类内容' },
+    { tag: '#情绪价值', platform: 'xiaohongshu', heat: '🔥🔥🔥', desc: '表达真实情绪的内容引发共鸣' },
+    { tag: '#厨房小白进化史', platform: 'douyin', heat: '🔥🔥', desc: '从不会做饭到会做饭的成长记录' },
+    { tag: '#平替好物', platform: 'xiaohongshu', heat: '🔥🔥🔥', desc: '平价替代大牌，学生党最爱' },
+  ],
+
+  // 二创灵感 + 拍摄建议
+  ideas: [
+    {
+      title: '「3秒变装」挑战',
+      type: '二创',
+      platform: 'douyin',
+      desc: '从素颜/睡衣 → 化妆/穿搭的快速切换，用卡点音乐配合转场',
+      shooting: '🎬 拍摄建议：手机固定机位，拍两段同样位置的视频。第一段穿睡衣素颜，第二段换装化妆后。剪辑用「叠化」转场，BGM选节奏感强的卡点音乐。时长15-30秒最佳。',
+      difficulty: '⭐ 简单',
+    },
+    {
+      title: '「我的工作日一天」vlog',
+      type: '二创',
+      platform: 'douyin',
+      desc: '从起床到睡觉完整记录，加入你的日历打卡/运动/饮食画面',
+      shooting: '🎬 拍摄建议：手机随手拍即可，不用追求完美构图。关键片段：闹钟响→早餐→通勤→工作间隙→运动→晚餐。用画外音讲述当天心情。时长60-90秒。',
+      difficulty: '⭐⭐ 中等',
+    },
+    {
+      title: '「168cm女生一周穿搭」',
+      type: '二创',
+      platform: 'xiaohongshu',
+      desc: '利用你现有衣服搭配7套不同风格，拍对镜自拍或平铺图',
+      shooting: '🎬 拍摄建议：对镜自拍时手机与脸同高，略微仰角显腿长。自然光最好，靠近窗户。每套拍2-3张不同角度。发小红书用3:4竖图，加文字标签标注品牌/价格。',
+      difficulty: '⭐ 简单',
+    },
+    {
+      title: '「一人食·今日吃什么」',
+      type: '二创',
+      platform: 'douyin',
+      desc: '把你每天的饮食记录拍成视频，展示做饭过程和成品',
+      shooting: '🎬 拍摄建议：俯拍料理台，用手机支架。关键镜头：食材展示→切菜特写→下锅瞬间→成品摆盘。加速播放（2-3倍速），配轻快BGM。',
+      difficulty: '⭐⭐ 中等',
+    },
+    {
+      title: '「我的减肥真实记录」',
+      type: '二创',
+      platform: 'douyin',
+      desc: '结合体重数据、运动记录，做减肥前后对比或每周进度',
+      shooting: '🎬 拍摄建议：每周同一时间、同一位置称体重并录屏。配合运动片段混剪。用数字大字幕显示每周体重变化。BGM选励志/燃向音乐。',
+      difficulty: '⭐⭐ 中等',
+    },
+    {
+      title: '「沉浸式做一件小事」',
+      type: '二创',
+      platform: 'douyin',
+      desc: '无旁白纯声音+画面的ASMR风格，如做饭/整理房间/护肤',
+      shooting: '🎬 拍摄建议：关闭背景音乐，保留原声（切菜声、水声、翻书声）。固定机位，画面干净。加柔光滤镜。时长40-60秒。',
+      difficulty: '⭐ 简单',
+    },
+    {
+      title: '「打工人记账日记」',
+      type: '原创',
+      platform: 'xiaohongshu',
+      desc: '分享每日花销和理财小技巧，结合你的记账数据',
+      shooting: '🎬 拍摄建议：截图你的记账页面+实物照片拼贴。用小红书图文形式，文字详细列出花销明细和心得。配色统一用粉色/奶油色调。',
+      difficulty: '⭐ 简单',
+    },
+    {
+      title: '「素人改造：普通人也能变美」',
+      type: '二创',
+      platform: 'douyin',
+      desc: '对比穿搭前后的变化，突出适合普通人的变美思路',
+      shooting: '🎬 拍摄建议：穿基础款拍「改造前」→ 换上推荐穿搭拍「改造后」。用分屏对比。加字幕解说每件单品的选择理由。BGM用反差大的两段音乐。',
+      difficulty: '⭐⭐⭐ 较难',
+    },
+  ],
+
+  storageKey: 'workbench_media_plan',
+
+  init() {
+    this.renderTopics();
+    this.renderIdeas();
+    this.renderPlanList();
+  },
+
+  refreshTopics() {
+    // 随机打乱并展示
+    const shuffled = [...this.topics].sort(() => Math.random() - 0.5);
+    this.renderTopics(shuffled.slice(0, 6));
+    App.toast('🔄 热点已刷新');
+  },
+
+  renderTopics(customList) {
+    const list = customList || this.topics.slice(0, 6);
+    const el = document.getElementById('hot-topics');
+    el.innerHTML = list.map(t => `
+      <div class="topic-item">
+        <span class="topic-heat">${t.heat}</span>
+        <span class="topic-tag">${t.tag}</span>
+        <span class="topic-platform">${t.platform === 'douyin' ? '🎵抖音' : '📕小红书'}</span>
+        <span class="topic-desc">${t.desc}</span>
+      </div>
+    `).join('');
+  },
+
+  refreshIdeas() {
+    const shuffled = [...this.ideas].sort(() => Math.random() - 0.5);
+    this.renderIdeas(shuffled.slice(0, 4));
+    App.toast('💡 灵感已刷新');
+  },
+
+  renderIdeas(customList) {
+    const list = customList || this.ideas.slice(0, 4);
+    const el = document.getElementById('idea-list');
+    el.innerHTML = list.map(i => `
+      <div class="idea-card">
+        <div class="idea-header">
+          <span class="idea-type ${i.type === '二创' ? 'remix' : 'original'}">${i.type}</span>
+          <span class="idea-platform">${i.platform === 'douyin' ? '🎵抖音' : '📕小红书'}</span>
+          <span class="idea-difficulty">${i.difficulty}</span>
+        </div>
+        <div class="idea-title">${i.title}</div>
+        <div class="idea-desc">${i.desc}</div>
+        <div class="idea-shooting">${i.shooting}</div>
+      </div>
+    `).join('');
+  },
+
+  // ===== 自媒体计划 =====
+  getPlans() {
+    try { return JSON.parse(localStorage.getItem(this.storageKey) || '[]'); }
+    catch { return []; }
+  },
+
+  savePlans(list) {
+    localStorage.setItem(this.storageKey, JSON.stringify(list));
+  },
+
+  addPlan() {
+    const input = document.getElementById('media-plan-input');
+    const platform = document.getElementById('media-plan-platform').value;
+    const date = document.getElementById('media-plan-date').value;
+
+    const text = input.value.trim();
+    if (!text) { App.toast('请输入计划内容 📝'); return; }
+
+    const platformLabel = platform === 'douyin' ? '🎵抖音' : platform === 'xiaohongshu' ? '📕小红书' : '🔀双平台';
+
+    const plans = this.getPlans();
+    plans.push({ text, platform: platformLabel, date: date || '待定', done: false, id: Date.now() });
+    this.savePlans(plans);
+
+    input.value = '';
+    document.getElementById('media-plan-date').value = '';
+    this.renderPlanList();
+    App.toast('✅ 计划已添加');
+  },
+
+  togglePlan(index) {
+    const plans = this.getPlans();
+    plans[index].done = !plans[index].done;
+    this.savePlans(plans);
+    this.renderPlanList();
+  },
+
+  removePlan(index) {
+    const plans = this.getPlans();
+    plans.splice(index, 1);
+    this.savePlans(plans);
+    this.renderPlanList();
+  },
+
+  renderPlanList() {
+    const plans = this.getPlans();
+    const el = document.getElementById('media-plan-list');
+
+    if (plans.length === 0) {
+      el.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">还没有拍摄计划，从灵感里选一个吧~</div>';
+      return;
+    }
+
+    el.innerHTML = plans.map((p, i) => `
+      <div class="media-plan-item ${p.done ? 'done' : ''}">
+        <input type="checkbox" class="todo-checkbox" ${p.done ? 'checked' : ''} onchange="MediaHelper.togglePlan(${i})">
+        <span class="media-plan-text">${this.escape(p.text)}</span>
+        <span class="media-plan-platform">${p.platform}</span>
+        <span class="media-plan-date">📅 ${p.date}</span>
+        <span class="media-plan-del" onclick="MediaHelper.removePlan(${i})">✕</span>
+      </div>
+    `).join('');
+  },
+
+  escape(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+};
+
+</script>
+  <script>
+// ===== 穿搭推荐模块（含图片+每日刷新） =====
+const Outfit = {
+  userHeight: 168,
+  userWeight: 55,
+  currentSeason: 'summer',
+
+  // 生成今日日期种子
+  todaySeed() {
+    const d = new Date();
+    return `${d.getFullYear()}${d.getMonth()+1}${d.getDate()}`;
+  },
+
+  // 获取今日推荐索引
+  getDailyIndex(max) {
+    const seed = parseInt(this.todaySeed());
+    return seed % max;
+  },
+
+  // 穿搭库
+  outfits: {
+    summer: [
+      {
+        title: '法式茶歇裙 + 草编包',
+        desc: '收腰V领茶歇裙最适合168cm的身高，露出锁骨和脚踝，视觉上更显修长。搭配草编包和细带凉鞋，温柔又清爽。',
+        items: '茶歇裙(选M码) | 细带凉鞋 | 草编包 | 金色细项链',
+        tips: '💡 裙长选到小腿肚最显高，避开刚好到膝盖的长度',
+        colors: '鹅黄 / 奶白 / 碎花',
+        img: this.drawTeaDress,
+      },
+      {
+        title: '高腰阔腿裤 + 短款针织背心',
+        desc: '168cm穿阔腿裤超有气场。高腰设计拉长腿部比例，短款上衣露出最细的腰部，清爽又有层次。',
+        items: '高腰阔腿裤 | 短款背心 | 帆布鞋/穆勒鞋 | 腋下包',
+        tips: '💡 裤长选到鞋面但不拖地，搭配厚底鞋效果更好',
+        colors: '卡其裤+白背心 / 黑裤+亮色背心',
+        img: this.drawWidePants,
+      },
+      {
+        title: 'A字短裙 + 宽松衬衫',
+        desc: '110斤的腿通常线条很好，A字短裙刚好展示优势。衬衫塞一半露一半，慵懒又时髦。',
+        items: '高腰A字短裙 | 棉质衬衫 | 小白鞋 | 帆布托特包',
+        tips: '💡 裙子长度在大腿中部最合适，搭配小白鞋青春感拉满',
+        colors: '牛仔蓝裙+白衬衫 / 黑色裙+条纹衬衫',
+        img: this.drawMiniSkirt,
+      },
+      {
+        title: '吊带连衣裙 + 轻薄防晒开衫',
+        desc: '吊带裙是168cm的绝杀单品，外搭一件透明感开衫，防晒又若隐若现，约会逛街都合适。',
+        items: '细吊带连衣裙 | 薄款开衫 | 一字带凉鞋 | 迷你链条包',
+        tips: '💡 吊带裙选收腰款，裙摆微A字，长度到脚踝上方最优雅',
+        colors: '黑色吊带裙(显瘦) / 香槟色(温柔)',
+        img: this.drawSlipDress,
+      },
+    ],
+    spring: [
+      {
+        title: '风衣 + 牛仔裤 + 马丁靴',
+        desc: '168cm是风衣的完美身高。卡其色中长款风衣搭配直筒牛仔裤和马丁靴，帅气和优雅并存。',
+        items: '中长款风衣 | 直筒牛仔裤 | 马丁靴 | 纯色打底衫',
+        tips: '💡 风衣长度选膝盖以下5cm，敞开穿更显高',
+        colors: '卡其风衣+蓝牛仔 / 灰绿风衣+黑牛仔',
+        img: this.drawTrench,
+      },
+      {
+        title: '针织开衫 + 碎花连衣裙',
+        desc: '春天标配的温柔穿搭。短款针织开衫提高腰线，碎花裙增加柔美感。168穿长裙刚好不压个子。',
+        items: '短款针织开衫 | 碎花中长裙 | 乐福鞋 | 珍珠耳钉',
+        tips: '💡 开衫选到腰线以上，颜色与裙子同色系呼应',
+        colors: '奶白开衫+淡紫碎花 / 粉色开衫+白底碎花',
+        img: this.drawCardigan,
+      },
+    ],
+    winter: [
+      {
+        title: '长款大衣 + 高领毛衣 + 直筒裤',
+        desc: '168cm穿长款大衣气场全开。H型或X型大衣最修饰身材，内搭高领毛衣显脸小。',
+        items: '羊毛大衣(过膝) | 高领毛衣 | 直筒西裤 | 短靴',
+        tips: '💡 大衣长度在小腿肚最显高，内搭全部塞进裤子里',
+        colors: '驼色大衣+米色内搭 / 黑色大衣+亮色围巾点睛',
+        img: this.drawLongCoat,
+      },
+      {
+        title: '短款羽绒服 + 鲨鱼裤 + 长袜+雪地靴',
+        desc: '上宽下窄的显瘦公式。短款羽绒服不压身高，鲨鱼裤贴合腿型，长袜外穿增加层次感。',
+        items: '短款面包羽绒服 | 鲨鱼裤 | 中筒袜 | 雪地靴/厚底鞋',
+        tips: '💡 羽绒服选刚好到胯的长度，袜子颜色和鞋子呼应',
+        colors: '奶油白羽绒服(温柔) / 黑色(百搭显瘦)',
+        img: this.drawPuffer,
+      },
+    ],
+    work: [
+      {
+        title: '西装外套 + 垂感西裤 + 尖头鞋',
+        desc: '干练又不失女人味的通勤搭配。微宽松西装不显死板，垂感西裤修饰腿型，尖头鞋拉长线条。',
+        items: '微宽松西装 | 垂感西裤 | 尖头平底鞋/小猫跟 | 简约托特包',
+        tips: '💡 西装选比平时大一码更时髦，内搭选V领显脖子长',
+        colors: '燕麦色西装+白裤 / 深灰西装+同色系裤',
+        img: this.drawBlazer,
+      },
+      {
+        title: '针织连衣裙 + 细腰带 + 乐福鞋',
+        desc: '一件搞定通勤的懒人穿搭。针织裙贴合身形展示168的好比例，加一条细腰带明确腰线。',
+        items: '修身针织连衣裙 | 细腰带 | 乐福鞋 | 简约腕表',
+        tips: '💡 裙子选竖条纹或纯色，避开大花纹显胖',
+        colors: '黑色/藏蓝(干练) / 驼色/燕麦(温柔)',
+        img: this.drawKnitDress,
+      },
+    ],
+    date: [
+      {
+        title: '一字肩针织衫 + 包臀中长裙',
+        desc: '露锁骨+包臀曲线，温柔又有女人味。168的身高穿中长裙刚好到小腿最细处。',
+        items: '一字肩针织衫 | 包臀中长裙 | 细跟凉鞋 | 手拿包',
+        tips: '💡 一字肩选有弹力的，不会一直滑落，搭配锁骨链更精致',
+        colors: '黑色上衣+红色裙(惊艳) / 奶油白全套(温柔)',
+        img: this.drawOffShoulder,
+      },
+      {
+        title: '娃娃领衬衫 + 百褶短裙 + 玛丽珍鞋',
+        desc: '甜美减龄的约会穿搭。娃娃领自带少女感，百褶裙灵动活泼，玛丽珍鞋增加精致度。',
+        items: '娃娃领衬衫 | 百褶短裙 | 玛丽珍鞋 | 迷你斜挎包',
+        tips: '💡 上衣塞进裙子里，裙子选有内衬的避免走光',
+        colors: '白衬衫+粉色百褶 / 蓝衬衫+白百褶(学院风)',
+        img: this.drawCollared,
+      },
+    ],
+  },
+
+  // ===== 穿搭示意图 SVG =====
+  drawTeaDress() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="60" y="15" width="40" height="18" rx="9" fill="#fce4ec"/>
+      <rect x="55" y="33" width="50" height="70" rx="8" fill="#ffe0b2"/>
+      <path d="M55 60 Q55 80 60 95 L100 95 Q105 80 105 60" fill="#ffe0b2"/>
+      <rect x="55" y="95" width="50" height="55" rx="5" fill="#fff3e0"/>
+      <line x1="55" y1="115" x2="105" y2="115" stroke="#ffe0b2" stroke-width="1"/>
+      <rect x="52" y="150" width="25" height="12" rx="4" fill="#efebe9"/>
+      <rect x="83" y="150" width="25" height="12" rx="4" fill="#efebe9"/>
+      <circle cx="80" cy="28" r="15" fill="#ffe0b2" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="180" text-anchor="middle" font-size="10" fill="#bcaaa4">茶歇裙</text>
+    </svg>`;
+  },
+
+  drawWidePants() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="60" y="15" width="40" height="25" rx="6" fill="#fff"/>
+      <rect x="50" y="40" width="60" height="75" rx="4" fill="#e3f2fd"/>
+      <rect x="50" y="115" width="27" height="50" rx="3" fill="#e3f2fd"/>
+      <rect x="83" y="115" width="27" height="50" rx="3" fill="#e3f2fd"/>
+      <rect x="50" y="160" width="30" height="8" rx="4" fill="#fff"/>
+      <rect x="80" y="160" width="30" height="8" rx="4" fill="#fff"/>
+      <circle cx="80" cy="28" r="15" fill="#e3f2fd" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="185" text-anchor="middle" font-size="10" fill="#bcaaa4">阔腿裤套装</text>
+    </svg>`;
+  },
+
+  drawMiniSkirt() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="55" y="15" width="50" height="30" rx="5" fill="#fff"/>
+      <rect x="60" y="45" width="40" height="20" rx="3" fill="#e8eaf6"/>
+      <path d="M60 65 L55 100 L105 100 L100 65 Z" fill="#e8eaf6"/>
+      <rect x="52" y="100" width="25" height="60" rx="3" fill="#ffe0b2"/>
+      <rect x="83" y="100" width="25" height="60" rx="3" fill="#ffe0b2"/>
+      <rect x="52" y="155" width="27" height="8" rx="4" fill="#fff"/>
+      <rect x="81" y="155" width="27" height="8" rx="4" fill="#fff"/>
+      <circle cx="80" cy="30" r="15" fill="#e8eaf6" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">A字短裙</text>
+    </svg>`;
+  },
+
+  drawSlipDress() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="65" y="12" width="30" height="10" rx="3" fill="#fce4ec"/>
+      <path d="M55 22 L60 95 L100 95 L105 22 Z" fill="#e8eaf6"/>
+      <rect x="55" y="95" width="50" height="55" rx="4" fill="#e8eaf6"/>
+      <rect x="52" y="150" width="25" height="12" rx="4" fill="#efebe9"/>
+      <rect x="83" y="150" width="25" height="12" rx="4" fill="#efebe9"/>
+      <circle cx="80" cy="32" r="15" fill="#e8eaf6" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">吊带连衣裙</text>
+    </svg>`;
+  },
+
+  drawTrench() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="50" y="15" width="60" height="85" rx="6" fill="#d7ccc8"/>
+      <rect x="50" y="15" width="20" height="50" rx="3" fill="#d7ccc8"/>
+      <rect x="90" y="15" width="20" height="50" rx="3" fill="#d7ccc8"/>
+      <rect x="55" y="100" width="22" height="55" rx="3" fill="#90a4ae"/>
+      <rect x="83" y="100" width="22" height="55" rx="3" fill="#90a4ae"/>
+      <rect x="55" y="148" width="24" height="8" rx="4" fill="#5d4037"/>
+      <rect x="81" y="148" width="24" height="8" rx="4" fill="#5d4037"/>
+      <circle cx="80" cy="30" r="15" fill="#d7ccc8" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">风衣</text>
+    </svg>`;
+  },
+
+  drawCardigan() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="60" y="15" width="40" height="25" rx="5" fill="#f8bbd0"/>
+      <rect x="52" y="40" width="56" height="30" rx="4" fill="#f8bbd0"/>
+      <path d="M55 70 L60 95 L100 95 L105 70 Z" fill="#fce4ec"/>
+      <rect x="55" y="95" width="50" height="50" rx="4" fill="#fce4ec"/>
+      <rect x="52" y="145" width="25" height="10" rx="4" fill="#efebe9"/>
+      <rect x="83" y="145" width="25" height="10" rx="4" fill="#efebe9"/>
+      <circle cx="80" cy="30" r="15" fill="#f8bbd0" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">针织开衫</text>
+    </svg>`;
+  },
+
+  drawLongCoat() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="50" y="15" width="60" height="100" rx="8" fill="#8d6e63"/>
+      <rect x="55" y="20" width="50" height="25" rx="4" fill="#efebe9"/>
+      <rect x="55" y="115" width="22" height="40" rx="3" fill="#424242"/>
+      <rect x="83" y="115" width="22" height="40" rx="3" fill="#424242"/>
+      <rect x="55" y="148" width="24" height="8" rx="4" fill="#3e2723"/>
+      <rect x="81" y="148" width="24" height="8" rx="4" fill="#3e2723"/>
+      <circle cx="80" cy="32" r="15" fill="#efebe9" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">长款大衣</text>
+    </svg>`;
+  },
+
+  drawPuffer() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="52" y="12" width="56" height="45" rx="20" fill="#fff9c4"/>
+      <rect x="55" y="57" width="50" height="50" rx="8" fill="#424242"/>
+      <rect x="55" y="107" width="22" height="50" rx="4" fill="#424242"/>
+      <rect x="83" y="107" width="22" height="50" rx="4" fill="#424242"/>
+      <rect x="52" y="100" width="27" height="8" rx="4" fill="#fff"/>
+      <rect x="81" y="100" width="27" height="8" rx="4" fill="#fff"/>
+      <rect x="53" y="150" width="25" height="8" rx="4" fill="#8d6e63"/>
+      <rect x="82" y="150" width="25" height="8" rx="4" fill="#8d6e63"/>
+      <circle cx="80" cy="28" r="15" fill="#fff9c4" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">短款羽绒服</text>
+    </svg>`;
+  },
+
+  drawBlazer() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="55" y="15" width="50" height="50" rx="6" fill="#bdbdbd"/>
+      <rect x="55" y="15" width="18" height="40" rx="3" fill="#bdbdbd"/>
+      <rect x="87" y="15" width="18" height="40" rx="3" fill="#bdbdbd"/>
+      <rect x="58" y="65" width="44" height="40" rx="4" fill="#f5f5f5"/>
+      <rect x="55" y="105" width="22" height="48" rx="3" fill="#757575"/>
+      <rect x="83" y="105" width="22" height="48" rx="3" fill="#757575"/>
+      <rect x="52" y="148" width="26" height="6" rx="3" fill="#424242"/>
+      <rect x="82" y="148" width="26" height="6" rx="3" fill="#424242"/>
+      <circle cx="80" cy="30" r="15" fill="#f5f5f5" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">西装套装</text>
+    </svg>`;
+  },
+
+  drawKnitDress() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="58" y="12" width="44" height="85" rx="8" fill="#a1887f"/>
+      <rect x="55" y="97" width="50" height="55" rx="6" fill="#a1887f"/>
+      <rect x="60" y="65" width="40" height="3" rx="1" fill="#8d6e63"/>
+      <rect x="52" y="152" width="25" height="10" rx="4" fill="#5d4037"/>
+      <rect x="83" y="152" width="25" height="10" rx="4" fill="#5d4037"/>
+      <circle cx="80" cy="30" r="15" fill="#a1887f" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">针织连衣裙</text>
+    </svg>`;
+  },
+
+  drawOffShoulder() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="52" y="12" width="56" height="15" rx="7" fill="#424242"/>
+      <rect x="55" y="27" width="50" height="40" rx="4" fill="#424242"/>
+      <rect x="55" y="67" width="50" height="55" rx="4" fill="#b71c1c"/>
+      <rect x="52" y="122" width="25" height="10" rx="4" fill="#efebe9"/>
+      <rect x="83" y="122" width="25" height="10" rx="4" fill="#efebe9"/>
+      <circle cx="80" cy="32" r="15" fill="#424242" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">一字肩</text>
+    </svg>`;
+  },
+
+  drawCollared() {
+    return `<svg viewBox="0 0 160 200" class="outfit-svg">
+      <rect x="58" y="15" width="44" height="30" rx="4" fill="#fff"/>
+      <polygon points="70,15 80,25 90,15" fill="#fce4ec"/>
+      <rect x="60" y="45" width="40" height="20" rx="3" fill="#fff"/>
+      <path d="M60 65 L55 100 L105 100 L100 65 Z" fill="#f8bbd0"/>
+      <rect x="52" y="100" width="25" height="55" rx="3" fill="#ffe0b2"/>
+      <rect x="83" y="100" width="25" height="55" rx="3" fill="#ffe0b2"/>
+      <rect x="50" y="150" width="28" height="8" rx="4" fill="#ef5350"/>
+      <rect x="82" y="150" width="28" height="8" rx="4" fill="#ef5350"/>
+      <circle cx="80" cy="30" r="15" fill="#fff" stroke="#f0dce2" stroke-width="1"/>
+      <text x="80" y="182" text-anchor="middle" font-size="10" fill="#bcaaa4">娃娃领百褶裙</text>
+    </svg>`;
+  },
+
+  init() {
+    // 加载上次选择的季节
+    try { this.currentSeason = localStorage.getItem('outfit_season') || 'summer'; }
+    catch { this.currentSeason = 'summer'; }
+
+    this.renderOutfits();
+  },
+
+  switchSeason(season) {
+    this.currentSeason = season;
+    localStorage.setItem('outfit_season', season);
+    document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.season-btn[onclick*="${season}"]`)?.classList.add('active');
+    this.renderOutfits();
+  },
+
+  renderOutfits() {
+    const list = this.outfits[this.currentSeason] || [];
+    const todayIdx = this.getDailyIndex(list.length);
+    // 今日主打推荐放在第一个，其余随机排列
+    const todayPick = list[todayIdx];
+    const rest = list.filter((_, i) => i !== todayIdx).sort(() => Math.random() - 0.5);
+    const display = [todayPick, ...rest.slice(0, 3)];
+
+    const el = document.getElementById('outfit-cards');
+    el.innerHTML = display.map((o, i) => {
+      const svg = typeof o.img === 'function' ? o.img() : '';
+      return `
+      <div class="outfit-card${i === 0 ? ' daily-pick' : ''}">
+        ${i === 0 ? '<span class="daily-badge">🌟 今日推荐</span>' : ''}
+        <div class="outfit-card-img">${svg}</div>
+        <div class="outfit-card-title">${o.title}</div>
+        <div class="outfit-card-desc">${o.desc}</div>
+        <div class="outfit-card-items">
+          <span class="outfit-label">🛍️ 单品</span>${o.items}
+        </div>
+        <div class="outfit-card-colors">
+          <span class="outfit-label">🎨 配色</span>${o.colors}
+        </div>
+        <div class="outfit-card-tips">${o.tips}</div>
+      </div>`;
+    }).join('');
+  }
+};
+
+</script>
+  <script>
+// ===== 财经投资模块（可刷新+多样选择） =====
+const Invest = {
+  // 当前展示的产品（可刷新更换）
+  currentProducts: [],
+
+  // 更新时间
+  lastUpdate: '',
+
+  // ===== 完整投资产品池（支付宝可投） =====
+  pool: [
+    // 黄金类
+    {
+      id: 'gold_etf',
+      name: '🥇 博时黄金ETF联接C (002611)',
+      category: '黄金基金',
+      platform: '支付宝-理财-黄金',
+      minAmount: '1元起',
+      desc: '跟踪国内金价，今日金价约 798元/克。2026年全球央行持续购金，供需缺口约320吨为近十年最大。高盛预测年底目标价 4100美元/盎司。',
+      risk: '⭐⭐ 中低风险',
+      riskLevel: 'low',
+      trend: '📈 近1月波动区间 780-810元/克，震荡上行。8月为传统淡季，适合逢低布局。',
+      strategy: '每月定投100-500元，占总资产10-15%。金价跌破780元可适当加仓。',
+      tips: '⚠️ 短期波动大，不追高。关注8月底Jackson Hole央行年会。',
+      updated: '2026-08-01',
+    },
+    {
+      id: 'gold_saving',
+      name: '🥇 支付宝积存金',
+      category: '黄金储蓄',
+      platform: '支付宝-黄金-积存金',
+      minAmount: '1元起',
+      desc: '按克积存黄金，可兑换实物金条。当前金价约798元/克，适合长期定投攒金。',
+      risk: '⭐⭐ 中低风险',
+      riskLevel: 'low',
+      trend: '📊 金价年内涨幅约14%，央行连续16个月增持。积存金比实物金更灵活。',
+      strategy: '每周固定金额买入（如每周50元），不择时。攒够一定克数可提实物。',
+      tips: '✅ 强制储蓄好工具，金价跌时自动多买克数，涨时自动少买。',
+      updated: '2026-08-01',
+    },
+    // 货币基金类
+    {
+      id: 'yuebao',
+      name: '🪙 余额宝（天弘余额宝货币）',
+      category: '货币基金',
+      platform: '支付宝-余额宝',
+      minAmount: '0.01元起',
+      desc: '随时存取，当前七日年化约 0.88%，处于历史低位。1万元一天收益约0.24元。',
+      risk: '⭐ 低风险',
+      riskLevel: 'lowest',
+      trend: '📉 收益率持续走低，全市场货基平均仅1.13%。大行一年定存也才1.28%。',
+      strategy: '仅放3-6个月生活费（应急备用金）。多余资金应寻找替代方案。',
+      tips: '⚠️ 收益太低！超过生活费的钱建议转入同业存单基金（年化2-2.8%）。',
+      updated: '2026-08-01',
+    },
+    {
+      id: 'tongye',
+      name: '🪙 同业存单指数基金',
+      category: '现金管理',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '余额宝升级替代方案。投资银行同业存单，年化约2.0-2.8%，是余额宝的2-3倍收益。',
+      risk: '⭐ 低风险',
+      riskLevel: 'lowest',
+      trend: '📈 持有7天后随时赎回T+1到账，流动性接近余额宝但收益高出一倍多。',
+      strategy: '替代余额宝存放3-6个月不用的闲钱。7天后随时可取。',
+      tips: '✅ 2026年货基收益破1%背景下，同业存单基金是最佳替代方案。',
+      updated: '2026-08-01',
+    },
+    // 债券类
+    {
+      id: 'bond_pure',
+      name: '📜 招商产业债券C (001868)',
+      category: '纯债基金',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '纯债基金，不投股票。近1年收益约3.8%，最大回撤仅-0.5%，波动极小。',
+      risk: '⭐⭐ 中低风险',
+      riskLevel: 'low',
+      trend: '📈 债市在降息周期中表现稳定。2026年利率下行利好债券价格。',
+      strategy: '配置总资产20-30%作为稳健底仓。持有3个月以上免赎回费。',
+      tips: '✅ 纯债不碰可转债，波动远小于股票。加息周期注意短期回调。',
+      updated: '2026-08-01',
+    },
+    {
+      id: 'bond_short',
+      name: '📜 短债基金（嘉实超短债C 070009）',
+      category: '短债基金',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '超短债策略，久期短波动更小。近1年约2.5%，适合3-6个月不用的资金。',
+      risk: '⭐ 低风险',
+      riskLevel: 'lowest',
+      trend: '📊 短债波动极小，几乎每天正收益。流动性好，赎回T+1到账。',
+      strategy: '替代银行理财，存放3个月以上不用的钱。比货基收益高约1个百分点。',
+      tips: '✅ 极低波动的稳健选择，适合风险厌恶者。',
+      updated: '2026-08-01',
+    },
+    // 指数基金类
+    {
+      id: 'hs300',
+      name: '📊 天弘沪深300ETF联接A (000961)',
+      category: '指数基金',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '跟踪沪深300指数，当前PE约12倍处于历史中位。覆盖A股300家最大公司。',
+      risk: '⭐⭐⭐ 中等风险',
+      riskLevel: 'medium',
+      trend: '📊 沪深300年内涨幅约5.7%。估值合理，长期配置价值显现。',
+      strategy: '每周/月定投100-500元，持有3年以上。大跌日可额外加仓。',
+      tips: '⚠️ 短期可能亏20%+，必须用3年不用的闲钱。越跌越买是定投核心。',
+      updated: '2026-08-01',
+    },
+    {
+      id: 'zz500',
+      name: '📊 中证500指数增强 (161017)',
+      category: '指数基金',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '跟踪中证500中盘股，比沪深300弹性更大。指数增强策略争取超额收益。',
+      risk: '⭐⭐⭐ 中等风险',
+      riskLevel: 'medium',
+      trend: '📈 中证500估值处于历史较低分位，中小盘成长空间大。',
+      strategy: '与沪深300搭配定投，比例5:5或4:6，大小盘均衡配置。',
+      tips: '⚠️ 波动比沪深300大，弹性好但跌起来也猛。适合能承受波动的投资者。',
+      updated: '2026-08-01',
+    },
+    // 混合/策略类
+    {
+      id: 'guhun',
+      name: '⚖️ 交银定期支付双息平衡 (519732)',
+      category: '混合基金',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '股债混合，每月自动分红。基金经理管理超5年，历史年化约12%，回撤控制好。',
+      risk: '⭐⭐⭐ 中等风险',
+      riskLevel: 'medium',
+      trend: '📊 2026年混合基金分化大，需精选基金经理稳定、回撤小的产品。',
+      strategy: '不想自己折腾资产配置的人首选。每月有现金分红，体验感好。',
+      tips: '⚠️ 选基金经理任职3年以上、规模大于1亿的产品。',
+      updated: '2026-08-01',
+    },
+    {
+      id: 'dividend',
+      name: '💎 红利低波指数基金 (008115)',
+      category: '红利策略',
+      platform: '支付宝-理财-基金',
+      minAmount: '10元起',
+      desc: '投资高分红+低波动股票，年化股息率约4-5%。防御性强，适合震荡市。',
+      risk: '⭐⭐ 中低风险',
+      riskLevel: 'low',
+      trend: '📈 2026年利率下行环境下，高股息资产吸引力上升。红利策略表现稳健。',
+      strategy: '长期持有吃分红，适合作为底仓配置。每年有稳定现金分红。',
+      tips: '✅ 防御属性强，市场下跌时跌幅小于大盘。但牛市时可能跑输。',
+      updated: '2026-08-01',
+    },
+    // 养老/长期类
+    {
+      id: 'pension',
+      name: '🎯 养老目标日期FOF (006321)',
+      category: '养老FOF',
+      platform: '支付宝-理财-基金-养老',
+      minAmount: '10元起',
+      desc: '一篮子基金的基金，自动做资产配置。越接近退休日期越保守。',
+      risk: '⭐⭐ 中低风险',
+      riskLevel: 'low',
+      trend: '📊 FOF波动小，适合长期养老储蓄。支付宝养老专区常有费率优惠。',
+      strategy: '选目标日期匹配退休年份的产品。每月定投，持有3年以上效果更好。',
+      tips: '✅ 懒人首选。自动调仓，不用自己操心股债比例。',
+      updated: '2026-08-01',
+    },
+    {
+      id: 'nasdaq',
+      name: '🌍 纳斯达克100指数基金 (016056)',
+      category: '海外QDII',
+      platform: '支付宝-理财-基金-QDII',
+      minAmount: '10元起',
+      desc: '投资美国纳斯达克100家科技巨头（苹果、微软、英伟达等），全球化分散。',
+      risk: '⭐⭐⭐⭐ 中高风险',
+      riskLevel: 'high',
+      trend: '📈 美股科技股长期趋势向上，但波动较大。汇率波动也影响收益。',
+      strategy: '配置总资产5-10%做全球化分散。定投为主，不建议一次性重仓。',
+      tips: '⚠️ 高风险！可能面临美股回调+人民币升值的双重打击。额度有限经常限购。',
+      updated: '2026-08-01',
+    },
+  ],
+
+  // ===== 市场快讯 =====
+  marketNews: [
+    '🔥 余额宝七日年化跌破0.9%，创历史新低。同业存单基金成最佳替代。',
+    '📊 央行连续16个月增持黄金，全球央行2025年净购金863吨创历史峰值。',
+    '📈 2026年居民定存到期约50-77万亿元，理财搬家潮持续。',
+    '⚡ 高盛预测2026年底金价目标4100美元/盎司，中国银河看3800-4600美元。',
+    '🏦 银行一年期定存利率仅1.28%，倒逼资金流向基金和理财。',
+    '📉 全市场949只货基平均七日年化仅1.13%，告别"躺赚"时代。',
+    '💡 增利宝等固收+产品近1月年化升至4.93%，成稳健理财新宠。',
+    '🌍 2026年黄金供需缺口约320吨，为近十年最大。',
+  ],
+
+  init() {
+    this.refreshProducts();
+    this.lastUpdate = new Date().toLocaleString('zh-CN');
+  },
+
+  // 随机选取6款产品展示
+  refreshProducts() {
+    const shuffled = [...this.pool].sort(() => Math.random() - 0.5);
+    this.currentProducts = shuffled.slice(0, 6);
+    this.lastUpdate = new Date().toLocaleString('zh-CN');
+    this.renderCards();
+  },
+
+  renderCards() {
+    const el = document.getElementById('invest-cards');
+    if (!el) return;
+
+    // 随机选2条快讯
+    const news = [...this.marketNews].sort(() => Math.random() - 0.5).slice(0, 2);
+
+    el.innerHTML = `
+      <div class="invest-news-bar">
+        ${news.map(n => `<div class="invest-news-item">${n}</div>`).join('')}
+      </div>
+      <div class="invest-update-info">
+        <span>🕐 数据更新于 ${this.lastUpdate}</span>
+        <button class="invest-refresh-btn" onclick="Invest.refreshProducts()">🔄 刷新推荐</button>
+      </div>
+      <div class="invest-grid">
+        ${this.currentProducts.map(p => `
+          <div class="invest-card risk-${p.riskLevel}">
+            <div class="invest-card-header">
+              <div class="invest-card-title-group">
+                <div class="invest-card-name">${p.name}</div>
+                <div class="invest-card-category">${p.category} · ${p.platform}</div>
+              </div>
+              <span class="invest-min">${p.minAmount}</span>
+            </div>
+            <div class="invest-card-body">
+              <div class="invest-desc">${p.desc}</div>
+              <div class="invest-detail-row">
+                <span class="invest-label">风险等级</span>
+                <span class="invest-value">${p.risk}</span>
+              </div>
+              <div class="invest-detail-row">
+                <span class="invest-label">📈 近期趋势</span>
+                <span class="invest-value trend">${p.trend}</span>
+              </div>
+              <div class="invest-detail-row">
+                <span class="invest-label">💡 投资策略</span>
+                <span class="invest-value">${p.strategy}</span>
+              </div>
+              <div class="invest-tips">${p.tips}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+};
+
+</script>
+  <script>
+// ===== 每日健身计划模块 =====
+const Fitness = {
+  currentDate: new Date(),
+
+  // 训练方案池
+  plans: [
+    {
+      name: '🔥 全身燃脂日',
+      focus: '有氧为主',
+      duration: '约45分钟',
+      calories: '约350kcal',
+      emoji: '🔥',
+      warmup: '开合跳 3分钟 + 动态拉伸 5分钟',
+      exercises: [
+        { name: '波比跳', sets: '3组', reps: '12次', rest: '休息45秒', icon: '🤸' },
+        { name: '高抬腿', sets: '3组', reps: '30秒', rest: '休息30秒', icon: '🦵' },
+        { name: '登山跑', sets: '3组', reps: '40秒', rest: '休息30秒', icon: '⛰️' },
+        { name: '开合跳', sets: '3组', reps: '45秒', rest: '休息30秒', icon: '⭐' },
+        { name: '平板支撑', sets: '3组', reps: '30秒', rest: '休息30秒', icon: '🧘' },
+      ],
+      cooldown: '全身拉伸 5分钟',
+      tips: '💡 动作之间尽量少休息，保持心率在燃脂区间。新手可以每组减少5-10秒。',
+    },
+    {
+      name: '💪 上肢力量日',
+      focus: '力量训练',
+      duration: '约40分钟',
+      calories: '约250kcal',
+      emoji: '💪',
+      warmup: '手臂画圈 2分钟 + 肩部拉伸 3分钟',
+      exercises: [
+        { name: '俯卧撑（跪姿/标准）', sets: '4组', reps: '10-15次', rest: '休息60秒', icon: '🤲' },
+        { name: '哑铃弯举（可用水瓶替代）', sets: '3组', reps: '12次', rest: '休息45秒', icon: '🏋️' },
+        { name: '哑铃肩推', sets: '3组', reps: '12次', rest: '休息45秒', icon: '⬆️' },
+        { name: '三头肌臂屈伸（椅子辅助）', sets: '3组', reps: '10次', rest: '休息45秒', icon: '🪑' },
+        { name: '侧平举', sets: '3组', reps: '15次', rest: '休息30秒', icon: '🦅' },
+      ],
+      cooldown: '手臂和肩部拉伸 5分钟',
+      tips: '💡 没有哑铃可以用500ml矿泉水瓶替代。动作慢起慢放，感受肌肉发力。',
+    },
+    {
+      name: '🦵 下肢塑形日',
+      focus: '力量训练',
+      duration: '约45分钟',
+      calories: '约300kcal',
+      emoji: '🦵',
+      warmup: '原地踏步 3分钟 + 髋部拉伸 5分钟',
+      exercises: [
+        { name: '深蹲', sets: '4组', reps: '15次', rest: '休息60秒', icon: '⬇️' },
+        { name: '弓步蹲（左右交替）', sets: '3组', reps: '每侧10次', rest: '休息45秒', icon: '🚶' },
+        { name: '臀桥', sets: '3组', reps: '15次', rest: '休息45秒', icon: '🌉' },
+        { name: '侧卧抬腿（每侧）', sets: '3组', reps: '15次', rest: '休息30秒', icon: '🦵' },
+        { name: '靠墙静蹲', sets: '3组', reps: '30秒', rest: '休息30秒', icon: '🧱' },
+      ],
+      cooldown: '腿部拉伸 5分钟（重点拉大腿前后侧）',
+      tips: '💡 深蹲时膝盖不要超过脚尖，重心放在脚后跟。弓步蹲保持上半身直立。',
+    },
+    {
+      name: '🧘 核心+柔韧日',
+      focus: '核心训练',
+      duration: '约35分钟',
+      calories: '约200kcal',
+      emoji: '🧘',
+      warmup: '猫牛式 2分钟 + 脊柱扭转 3分钟',
+      exercises: [
+        { name: '平板支撑', sets: '3组', reps: '30-45秒', rest: '休息30秒', icon: '🧘' },
+        { name: '俄罗斯转体', sets: '3组', reps: '20次', rest: '休息30秒', icon: '🔄' },
+        { name: '死虫式', sets: '3组', reps: '每侧10次', rest: '休息30秒', icon: '🐛' },
+        { name: '超人式', sets: '3组', reps: '12次', rest: '休息30秒', icon: '🦸' },
+        { name: '鸟狗式', sets: '3组', reps: '每侧8次', rest: '休息30秒', icon: '🐕' },
+      ],
+      cooldown: '瑜伽放松 5分钟（婴儿式+脊柱扭转+蝴蝶式）',
+      tips: '💡 核心训练重在动作质量而非数量。每个动作慢做，感受腹部发力。',
+    },
+    {
+      name: '🏃 有氧耐力日',
+      focus: '有氧运动',
+      duration: '约40分钟',
+      calories: '约380kcal',
+      emoji: '🏃',
+      warmup: '慢走→快走 5分钟 + 动态拉伸 3分钟',
+      exercises: [
+        { name: '跳绳/原地跑', sets: '3组', reps: '3分钟', rest: '休息60秒', icon: '🪢' },
+        { name: '爬坡快走（跑步机/户外）', sets: '1组', reps: '15分钟', rest: '—', icon: '⛰️' },
+        { name: '跳操跟练', sets: '1组', reps: '10分钟', rest: '—', icon: '🤸' },
+        { name: '冲刺间歇', sets: '5组', reps: '30秒快/30秒慢', rest: '—', icon: '💨' },
+      ],
+      cooldown: '慢走 5分钟 + 全身拉伸 5分钟',
+      tips: '💡 有氧日建议配合日历中的运动记录，看消耗卡路里是否达标。保持中等强度，能说话但不能唱歌的程度。',
+    },
+    {
+      name: '🎯 全身循环HIIT',
+      focus: '高强度间歇',
+      duration: '约25分钟',
+      calories: '约280kcal',
+      emoji: '🎯',
+      warmup: '原地小跑 2分钟 + 关节活动 3分钟',
+      exercises: [
+        { name: '深蹲跳', sets: '3组', reps: '10次', rest: '休息20秒', icon: '🐸' },
+        { name: '俯卧撑+摸肩', sets: '3组', reps: '8次', rest: '休息20秒', icon: '🤲' },
+        { name: '波比跳', sets: '3组', reps: '8次', rest: '休息30秒', icon: '🤸' },
+        { name: '登山跑', sets: '3组', reps: '30秒', rest: '休息20秒', icon: '⛰️' },
+        { name: '平板支撑开合跳', sets: '3组', reps: '12次', rest: '休息20秒', icon: '📐' },
+      ],
+      cooldown: '深呼吸+拉伸 5分钟',
+      tips: '💡 HIIT效率高但强度大，每周做1-2次即可。新手可以把组间休息延长到40秒。如有不适立即停止。',
+    },
+    {
+      name: '🌅 晨间唤醒瑜伽',
+      focus: '柔韧+呼吸',
+      duration: '约20分钟',
+      calories: '约80kcal',
+      emoji: '🌅',
+      warmup: '腹式深呼吸 2分钟',
+      exercises: [
+        { name: '猫牛式', sets: '5次', reps: '缓慢呼吸', rest: '—', icon: '🐱' },
+        { name: '下犬式', sets: '保持', reps: '30秒×2', rest: '—', icon: '🐕' },
+        { name: '战士一式（每侧）', sets: '保持', reps: '20秒', rest: '—', icon: '⚔️' },
+        { name: '三角式（每侧）', sets: '保持', reps: '20秒', rest: '—', icon: '📐' },
+        { name: '婴儿式放松', sets: '保持', reps: '1分钟', rest: '—', icon: '👶' },
+      ],
+      cooldown: '仰卧放松 3分钟',
+      tips: '💡 适合早上起床后做，唤醒身体。不追求强度，注重呼吸和身体的连接。',
+    },
+  ],
+
+  // 每日健身贴士
+  dailyTips: [
+    '运动前一定要热身5-10分钟，预防受伤。',
+    '运动后30分钟内补充蛋白质，帮助肌肉恢复。',
+    '每周至少安排1-2天休息日，让身体充分恢复。',
+    '保持充足睡眠（7-8小时），睡眠是肌肉生长的关键。',
+    '多喝水！运动日建议喝2-3升水。',
+    '力量训练后肌肉酸痛是正常的，一般持续24-72小时。',
+    '不要空腹做高强度训练，运动前1小时可以吃根香蕉。',
+    '女生不用担心练成"金刚芭比"，增肌需要极高强度的训练和特殊饮食。',
+    '运动时保持核心收紧，可以保护腰椎。',
+    '有氧和无氧结合效果最好，不要只做一种。',
+  ],
+
+  init() {
+    this.updateDateDisplay();
+    this.renderPlan();
+    this.renderTips();
+  },
+
+  fmt(y, m, d) {
+    return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  },
+
+  getDateStr() {
+    return this.fmt(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, this.currentDate.getDate());
+  },
+
+  updateDateDisplay() {
+    const d = this.currentDate;
+    document.getElementById('fitness-date-title').textContent =
+      `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  },
+
+  prevDay() {
+    this.currentDate = new Date(this.currentDate.getTime() - 86400000);
+    this.updateDateDisplay();
+    this.renderPlan();
+  },
+
+  nextDay() {
+    this.currentDate = new Date(this.currentDate.getTime() + 86400000);
+    this.updateDateDisplay();
+    this.renderPlan();
+  },
+
+  // 根据日期种子选方案
+  getPlanForDate() {
+    const dateStr = this.getDateStr();
+    const seed = dateStr.split('-').join('');
+    const idx = parseInt(seed) % this.plans.length;
+    return this.plans[idx];
+  },
+
+  refreshPlan() {
+    // 随机选一个不同的方案
+    const current = this.getPlanForDate();
+    const others = this.plans.filter(p => p.name !== current.name);
+    const picked = others[Math.floor(Math.random() * others.length)];
+
+    // 保存覆盖选择
+    const overrides = JSON.parse(localStorage.getItem('fitness_overrides') || '{}');
+    overrides[this.getDateStr()] = this.plans.indexOf(picked);
+    localStorage.setItem('fitness_overrides', JSON.stringify(overrides));
+
+    this.renderPlan();
+    App.toast(`🔄 已切换为「${picked.name}」`);
+  },
+
+  renderPlan() {
+    const dateStr = this.getDateStr();
+    const overrides = JSON.parse(localStorage.getItem('fitness_overrides') || '{}');
+
+    let plan;
+    if (overrides[dateStr] !== undefined) {
+      plan = this.plans[overrides[dateStr]];
+    } else {
+      plan = this.getPlanForDate();
+    }
+
+    const el = document.getElementById('fitness-cards');
+    el.innerHTML = `
+      <div class="fitness-plan-card">
+        <div class="fitness-plan-header">
+          <span class="fitness-plan-emoji">${plan.emoji}</span>
+          <div class="fitness-plan-info">
+            <div class="fitness-plan-name">${plan.name}</div>
+            <div class="fitness-plan-meta">
+              <span class="fitness-meta-tag">🎯 ${plan.focus}</span>
+              <span class="fitness-meta-tag">⏱️ ${plan.duration}</span>
+              <span class="fitness-meta-tag">🔥 ${plan.calories}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fitness-phase">
+          <div class="fitness-phase-title">🟢 热身</div>
+          <div class="fitness-phase-content">${plan.warmup}</div>
+        </div>
+
+        <div class="fitness-exercise-list">
+          <div class="fitness-phase-title">🔴 正式训练</div>
+          ${plan.exercises.map(ex => `
+            <div class="fitness-exercise-item">
+              <span class="fitness-ex-icon">${ex.icon}</span>
+              <span class="fitness-ex-name">${ex.name}</span>
+              <span class="fitness-ex-sets">${ex.sets} × ${ex.reps}</span>
+              <span class="fitness-ex-rest">${ex.rest}</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="fitness-phase">
+          <div class="fitness-phase-title">🔵 冷身</div>
+          <div class="fitness-phase-content">${plan.cooldown}</div>
+        </div>
+
+        <div class="fitness-plan-tips">${plan.tips}</div>
+      </div>
+    `;
+  },
+
+  renderTips() {
+    const tips = [...this.dailyTips].sort(() => Math.random() - 0.5).slice(0, 4);
+    const el = document.getElementById('fitness-tips-grid');
+    el.innerHTML = tips.map(t => `
+      <div class="fitness-tip-item">${t}</div>
+    `).join('');
+  }
+};
+
+</script>
+  <script>
+// ===== 多终端数据同步模块 =====
+const Sync = {
+  // 导出所有数据
+  exportData() {
+    const data = {
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      workbench_data: JSON.parse(localStorage.getItem('workbench_data') || '{}'),
+      workbench_profile: JSON.parse(localStorage.getItem('workbench_profile') || '{}'),
+      workbench_checkins: JSON.parse(localStorage.getItem('workbench_checkins') || '[]'),
+      workbench_pet: JSON.parse(localStorage.getItem('workbench_pet') || '{}'),
+      workbench_mealplan: JSON.parse(localStorage.getItem('workbench_mealplan') || '{}'),
+      workbench_media_plan: JSON.parse(localStorage.getItem('workbench_media_plan') || '[]'),
+      fitness_overrides: JSON.parse(localStorage.getItem('fitness_overrides') || '{}'),
+    };
+
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const now = new Date();
+    const filename = `小日子备份_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.json`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    App.toast('📥 数据已导出，请保存好文件');
+    document.getElementById('sync-status').innerHTML = `
+      <div class="sync-msg success">✅ 导出成功！文件已下载到本地。在另一台设备打开此页面，使用"导入备份文件"即可恢复。</div>
+    `;
+  },
+
+  // 导入数据
+  importData(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+
+        if (!data.version || !data.workbench_data) {
+          throw new Error('无效的备份文件');
+        }
+
+        // 询问用户是否覆盖
+        const confirm = window.confirm(
+          '⚠️ 导入将覆盖当前设备的所有数据！
+
+' +
+          `备份时间：${data.exportedAt || '未知'}
+
+` +
+          '确定要导入吗？当前数据将丢失。'
+        );
+        if (!confirm) { input.value = ''; return; }
+
+        // 导入所有数据
+        if (data.workbench_data) localStorage.setItem('workbench_data', JSON.stringify(data.workbench_data));
+        if (data.workbench_profile) localStorage.setItem('workbench_profile', JSON.stringify(data.workbench_profile));
+        if (data.workbench_checkins) localStorage.setItem('workbench_checkins', JSON.stringify(data.workbench_checkins));
+        if (data.workbench_pet) localStorage.setItem('workbench_pet', JSON.stringify(data.workbench_pet));
+        if (data.workbench_mealplan) localStorage.setItem('workbench_mealplan', JSON.stringify(data.workbench_mealplan));
+        if (data.workbench_media_plan) localStorage.setItem('workbench_media_plan', JSON.stringify(data.workbench_media_plan));
+        if (data.fitness_overrides) localStorage.setItem('fitness_overrides', JSON.stringify(data.fitness_overrides));
+
+        document.getElementById('sync-status').innerHTML = `
+          <div class="sync-msg success">✅ 数据导入成功！页面将自动刷新以应用更改。</div>
+        `;
+
+        App.toast('✅ 数据导入成功！正在刷新…');
+        setTimeout(() => location.reload(), 1500);
+
+      } catch (err) {
+        document.getElementById('sync-status').innerHTML = `
+          <div class="sync-msg error">❌ 导入失败：${err.message}。请确认选择了正确的备份文件。</div>
+        `;
+        App.toast('❌ 导入失败，文件格式不正确');
+      }
+    };
+    reader.readAsText(file);
+    input.value = '';
+  },
+
+  // 生成同步码（压缩数据为短码）
+  generateCode() {
+    try {
+      const data = {
+        v: 2,
+        t: Date.now(),
+        d: JSON.parse(localStorage.getItem('workbench_data') || '{}'),
+        p: JSON.parse(localStorage.getItem('workbench_profile') || '{}'),
+        c: JSON.parse(localStorage.getItem('workbench_checkins') || '[]'),
+        pet: JSON.parse(localStorage.getItem('workbench_pet') || '{}'),
+        mp: JSON.parse(localStorage.getItem('workbench_mealplan') || '{}'),
+        mplan: JSON.parse(localStorage.getItem('workbench_media_plan') || '[]'),
+        fo: JSON.parse(localStorage.getItem('fitness_overrides') || '{}'),
+      };
+
+      const json = JSON.stringify(data);
+      // 用 btoa 编码 + 截断提示
+      const encoded = btoa(unescape(encodeURIComponent(json)));
+
+      document.getElementById('sync-code-display').value = encoded;
+      document.getElementById('sync-status').innerHTML = `
+        <div class="sync-msg info">🔑 同步码已生成（${encoded.length}字符）。在另一台设备粘贴此码并点击"应用同步码"即可同步。</div>
+      `;
+
+      // 复制到剪贴板
+      navigator.clipboard?.writeText(encoded).then(() => {
+        App.toast('📋 同步码已复制到剪贴板');
+      }).catch(() => {
+        App.toast('🔑 同步码已生成，请手动复制');
+      });
+
+    } catch (err) {
+      document.getElementById('sync-status').innerHTML = `
+        <div class="sync-msg error">❌ 生成失败：${err.message}。建议使用"导出文件"方式。</div>
+      `;
+    }
+  },
+
+  // 应用同步码
+  applyCode() {
+    const code = document.getElementById('sync-code-input').value.trim();
+    if (!code) {
+      App.toast('请先输入同步码 📝');
+      return;
+    }
+
+    try {
+      const json = decodeURIComponent(escape(atob(code)));
+      const data = JSON.parse(json);
+
+      if (!data.v || !data.d) {
+        throw new Error('无效的同步码');
+      }
+
+      const confirm = window.confirm(
+        '⚠️ 应用同步码将覆盖当前设备的所有数据！
+
+' +
+        `数据时间：${new Date(data.t).toLocaleString()}
+
+` +
+        '确定要同步吗？'
+      );
+      if (!confirm) return;
+
+      if (data.d) localStorage.setItem('workbench_data', JSON.stringify(data.d));
+      if (data.p) localStorage.setItem('workbench_profile', JSON.stringify(data.p));
+      if (data.c) localStorage.setItem('workbench_checkins', JSON.stringify(data.c));
+      if (data.pet) localStorage.setItem('workbench_pet', JSON.stringify(data.pet));
+      if (data.mp) localStorage.setItem('workbench_mealplan', JSON.stringify(data.mp));
+      if (data.mplan) localStorage.setItem('workbench_media_plan', JSON.stringify(data.mplan));
+      if (data.fo) localStorage.setItem('fitness_overrides', JSON.stringify(data.fo));
+
+      document.getElementById('sync-status').innerHTML = `
+        <div class="sync-msg success">✅ 同步成功！页面将自动刷新。</div>
+      `;
+      App.toast('✅ 同步成功！');
+      setTimeout(() => location.reload(), 1500);
+
+    } catch (err) {
+      document.getElementById('sync-status').innerHTML = `
+        <div class="sync-msg error">❌ 同步码无效：${err.message}。请确认完整复制了同步码。</div>
+      `;
+      App.toast('❌ 同步码无效');
+    }
+  }
+};
+
+</script>
+  <script>
+// ===== 电子宠物 - 小豆 =====
+const Pet = {
+  // 小豆的生长阶段
+  stages: ['🌱', '🌿', '🌳', '🌸', '🍀', '⭐'],
+  currentStage: 0,
+
+  // 状态值
+  hunger: 100,
+  mood: 100,
+  lastFed: Date.now(),
+  feedCount: 0,
+
+  // 小豆的话
+  speeches: {
+    hungry: ['好饿呀…喂我吃点东西吧~', '肚子咕咕叫了…', '小豆需要能量！'],
+    happy: ['今天也要加油哦~', '你是我最好的朋友！', '好开心呀~', '小豆喜欢你！', '今天天气真好！'],
+    full: ['吃饱啦，好满足~', '嗝~太好吃了！', '谢谢你喂我！'],
+    idle: ['有什么需要我帮忙的吗？', '记得打卡哦~', '一起努力吧！', '你今天真好看！'],
+    sad: ['好久没理我了…', '小豆有点孤单', '陪陪我嘛~'],
+    morning: ['早上好！新的一天开始啦~', '早安！今天也要元气满满！'],
+    night: ['晚安啦~早点休息哦', '该睡觉了，明天见！'],
+  },
+
+  init() {
+    this.load();
+    this.render();
+    this.startDecay();
+  },
+
+  load() {
+    try {
+      const data = JSON.parse(localStorage.getItem('workbench_pet') || '{}');
+      if (data.hunger != null) this.hunger = data.hunger;
+      if (data.mood != null) this.mood = data.mood;
+      if (data.feedCount != null) this.feedCount = data.feedCount;
+      if (data.currentStage != null) this.currentStage = data.currentStage;
+      if (data.lastFed) this.lastFed = data.lastFed;
+    } catch {}
+  },
+
+  save() {
+    localStorage.setItem('workbench_pet', JSON.stringify({
+      hunger: this.hunger,
+      mood: this.mood,
+      feedCount: this.feedCount,
+      currentStage: this.currentStage,
+      lastFed: this.lastFed,
+    }));
+  },
+
+  feed() {
+    this.hunger = Math.min(100, this.hunger + 25);
+    this.mood = Math.min(100, this.mood + 15);
+    this.feedCount++;
+    this.lastFed = Date.now();
+
+    // 喂食动画
+    const svg = document.getElementById('pet-svg');
+    if (svg) {
+      svg.style.transform = 'scale(1.15)';
+      svg.style.transition = 'transform 0.2s ease';
+      setTimeout(() => { svg.style.transform = 'scale(1)'; }, 300);
+    }
+
+    this.save();
+    this.render();
+    this.say('full');
+    App.toast('🍎 喂了小豆！');
+  },
+
+  startDecay() {
+    // 每5分钟检查一次，饥饿和心情缓慢下降
+    setInterval(() => {
+      const elapsed = (Date.now() - this.lastFed) / 1000 / 60; // 分钟
+      if (elapsed > 10) {
+        this.hunger = Math.max(0, this.hunger - 5);
+        this.mood = Math.max(0, this.mood - 3);
+        this.lastFed = Date.now();
+        this.save();
+        this.render();
+      }
+    }, 300000); // 5分钟
+  },
+
+  say(type) {
+    const list = this.speeches[type] || this.speeches.idle;
+    const msg = list[Math.floor(Math.random() * list.length)];
+    const el = document.getElementById('pet-speech');
+    el.textContent = msg;
+    el.classList.add('active');
+    clearTimeout(this._speechTimer);
+    this._speechTimer = setTimeout(() => el.classList.remove('active'), 3000);
+  },
+
+  render() {
+    document.getElementById('pet-avatar').textContent = this.stages[this.currentStage];
+    document.getElementById('pet-hunger').textContent = this.hunger;
+    document.getElementById('pet-mood').textContent = this.mood;
+
+    // 根据状态自动说话
+    if (this.hunger < 30) {
+      this.say('hungry');
+    } else if (this.mood < 30) {
+      this.say('sad');
+    } else {
+      const hour = new Date().getHours();
+      if (hour < 9 && hour >= 5) this.say('morning');
+      else if (hour >= 22 || hour < 5) this.say('night');
+    }
+  }
+};
+
+</script>
+  <script>
+// ===== 收支记账模块 =====
+const Finance = {
+  currentDate: new Date(),
+
+  init() {
+    this.updateDateDisplay();
+    this.loadDay();
+    this.updateMonthSummary();
+  },
+
+  fmt(y, m, d) {
+    return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  },
+
+  getDateStr() {
+    return this.fmt(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, this.currentDate.getDate());
+  },
+
+  updateDateDisplay() {
+    const d = this.currentDate;
+    document.getElementById('finance-date-title').textContent =
+      `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  },
+
+  prevDay() {
+    this.currentDate = new Date(this.currentDate.getTime() - 86400000);
+    this.updateDateDisplay();
+    this.loadDay();
+  },
+
+  nextDay() {
+    this.currentDate = new Date(this.currentDate.getTime() + 86400000);
+    this.updateDateDisplay();
+    this.loadDay();
+  },
+
+  loadDay() {
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    this.renderList(day.finance || []);
+  },
+
+  add() {
+    const desc = document.getElementById('finance-desc').value.trim();
+    const amount = parseFloat(document.getElementById('finance-amount').value);
+    const type = document.getElementById('finance-type').value;
+    const category = document.getElementById('finance-category').value;
+
+    if (!desc) { App.toast('请输入说明 📝'); return; }
+    if (isNaN(amount) || amount <= 0) { App.toast('请输入有效金额 💰'); return; }
+
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    if (!day.finance) day.finance = [];
+    day.finance.push({ desc, amount, type, category, time: Date.now() });
+    Storage.saveDay(dateStr, day);
+
+    document.getElementById('finance-desc').value = '';
+    document.getElementById('finance-amount').value = '';
+
+    this.renderList(day.finance);
+    this.updateMonthSummary();
+    App.toast(`${type === 'income' ? '💰' : '💸'} 已记录：${desc} ¥${amount}`);
+  },
+
+  remove(index) {
+    const dateStr = this.getDateStr();
+    const day = Storage.getDay(dateStr);
+    day.finance.splice(index, 1);
+    Storage.saveDay(dateStr, day);
+    this.renderList(day.finance);
+    this.updateMonthSummary();
+  },
+
+  renderList(list) {
+    const el = document.getElementById('finance-list');
+    if (!list || list.length === 0) {
+      el.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">暂无记录</div>';
+      return;
+    }
+    el.innerHTML = list.map((f, i) => `
+      <div class="finance-item">
+        <span class="fi-icon">${f.type === 'income' ? '💰' : '💸'}</span>
+        <span class="fi-desc">${this.escape(f.desc)}</span>
+        <span class="fi-category">${f.category}</span>
+        <span class="fi-amount ${f.type}">${f.type === 'income' ? '+' : '-'}¥${f.amount.toFixed(2)}</span>
+        <span class="fi-del" onclick="Finance.remove(${i})">✕</span>
+      </div>
+    `).join('');
+  },
+
+  // 获取当月汇总
+  getMonthSummary(year, month) {
+    const all = Storage.getAll();
+    const prefix = `${year}-${String(month).padStart(2, '0')}`;
+    let income = 0, expense = 0;
+
+    for (const [key, day] of Object.entries(all)) {
+      if (!key.startsWith(prefix)) continue;
+      (day.finance || []).forEach(f => {
+        if (f.type === 'income') income += f.amount;
+        else expense += f.amount;
+      });
+    }
+    return { income, expense, balance: income - expense };
+  },
+
+  updateMonthSummary() {
+    const now = new Date();
+    const summary = this.getMonthSummary(now.getFullYear(), now.getMonth() + 1);
+    document.getElementById('finance-month-income').textContent = `¥${summary.income.toFixed(2)}`;
+    document.getElementById('finance-month-expense').textContent = `¥${summary.expense.toFixed(2)}`;
+    document.getElementById('finance-month-balance').textContent = `¥${summary.balance.toFixed(2)}`;
+  },
+
+  escape(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+};
+
+</script>
+  <script>
+// ===== 趋势统计模块 =====
+const Trends = {
+  init() {
+    this.renderAll();
+  },
+
+  // 获取最近30天数据
+  getRecent30Days() {
+    const result = [];
+    const now = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 86400000);
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const day = Storage.getDay(dateStr);
+      result.push({ date: dateStr, label: `${d.getMonth() + 1}/${d.getDate()}`, day });
+    }
+    return result;
+  },
+
+  renderAll() {
+    this.renderWeight();
+    this.renderExercise();
+    this.renderFinance();
+    this.renderCalories();
+  },
+
+  renderWeight() {
+    const data = this.getRecent30Days();
+    const el = document.getElementById('trend-weight');
+    const values = data.map(d => d.day.weight).filter(v => v != null);
+
+    if (values.length === 0) {
+      el.innerHTML = '<div class="trend-empty">还没有体重数据 📊</div>';
+      return;
+    }
+
+    const max = Math.max(...values) + 2;
+    const min = Math.min(...values) - 1;
+    const range = max - min || 1;
+
+    el.innerHTML = `<div class="trend-bar-container">${data.map(d => {
+      if (d.day.weight == null) return '<div class="trend-bar-wrap"></div>';
+      const h = ((d.day.weight - min) / range) * 100;
+      return `<div class="trend-bar-wrap">
+        <div class="trend-bar pink" style="height:${h}%"><span class="trend-bar-value">${d.day.weight}</span></div>
+        <span class="trend-bar-label">${d.label}</span>
+      </div>`;
+    }).join('')}</div>`;
+  },
+
+  renderExercise() {
+    const data = this.getRecent30Days();
+    const el = document.getElementById('trend-exercise');
+
+    const values = data.map(d => {
+      const exs = d.day.exercises || [];
+      return exs.reduce((sum, ex) => sum + (ex.calories || 0), 0);
+    });
+
+    const hasData = values.some(v => v > 0);
+    if (!hasData) {
+      el.innerHTML = '<div class="trend-empty">还没有运动记录 💪</div>';
+      return;
+    }
+
+    const max = Math.max(...values, 50);
+    el.innerHTML = `<div class="trend-bar-container">${values.map((v, i) => {
+      const h = (v / max) * 100;
+      return `<div class="trend-bar-wrap">
+        <div class="trend-bar green" style="height:${h}%">${v > 0 ? `<span class="trend-bar-value">${v}kcal</span>` : ''}</div>
+        <span class="trend-bar-label">${data[i].label}</span>
+      </div>`;
+    }).join('')}</div>`;
+  },
+
+  renderFinance() {
+    const data = this.getRecent30Days();
+    const el = document.getElementById('trend-finance');
+
+    const values = data.map(d => {
+      const fin = d.day.finance || [];
+      const income = fin.filter(f => f.type === 'income').reduce((s, f) => s + f.amount, 0);
+      const expense = fin.filter(f => f.type === 'expense').reduce((s, f) => s + f.amount, 0);
+      return { income, expense };
+    });
+
+    const hasData = values.some(v => v.income > 0 || v.expense > 0);
+    if (!hasData) {
+      el.innerHTML = '<div class="trend-empty">还没有收支记录 💳</div>';
+      return;
+    }
+
+    const allVals = values.flatMap(v => [v.income, v.expense]);
+    const max = Math.max(...allVals, 50);
+
+    el.innerHTML = `<div class="trend-bar-container">${values.map((v, i) => {
+      const total = v.income - v.expense;
+      const h = (Math.max(v.income, v.expense) / max) * 100;
+      const color = total >= 0 ? 'green' : 'pink';
+      return `<div class="trend-bar-wrap">
+        <div class="trend-bar ${color}" style="height:${h}%">${total !== 0 ? `<span class="trend-bar-value">${total > 0 ? '+' : ''}${total.toFixed(0)}</span>` : ''}</div>
+        <span class="trend-bar-label">${data[i].label}</span>
+      </div>`;
+    }).join('')}</div>`;
+  },
+
+  renderCalories() {
+    const data = this.getRecent30Days();
+    const el = document.getElementById('trend-calories');
+
+    const values = data.map(d => {
+      const diet = d.day.diet;
+      if (!diet) return 0;
+      let total = 0;
+      ['breakfast', 'lunch', 'dinner', 'snack'].forEach(meal => {
+        (diet[meal] || []).forEach(item => total += item.calories);
+      });
+      return total;
+    });
+
+    const hasData = values.some(v => v > 0);
+    if (!hasData) {
+      el.innerHTML = '<div class="trend-empty">还没有饮食记录 🍱</div>';
+      return;
+    }
+
+    const max = Math.max(...values, 200);
+    el.innerHTML = `<div class="trend-bar-container">${values.map((v, i) => {
+      const h = (v / max) * 100;
+      return `<div class="trend-bar-wrap">
+        <div class="trend-bar orange" style="height:${h}%">${v > 0 ? `<span class="trend-bar-value">${v}kcal</span>` : ''}</div>
+        <span class="trend-bar-label">${data[i].label}</span>
+      </div>`;
+    }).join('')}</div>`;
+  }
+};
+
+</script>
+  <script>
+// ===== 主应用 =====
+const App = {
+  currentTab: 'calendar',
+
+  // 头像候选
+  avatars: ['🐱', '🐶', '🐰', '🐻', '🐼', '🐨', '🐯', '🦊', '🐸', '🐙', '🦄', '🐣', '🌸', '🌟', '🍓', '🎀'],
+
+  init() {
+    // 加载个人资料
+    this.loadProfile();
+
+    // 加载打卡
+    this.updateCheckinUI();
+
+    // 初始化各模块
+    Calendar.init();
+    Diet.init();
+    MealPlan.init();
+    MediaHelper.init();
+    Outfit.init();
+    Invest.init();
+    Pet.init();
+    Finance.init();
+    Trends.init();
+
+    // 默认显示日历tab
+    this.switchTab('calendar');
+  },
+
+  // ===== 个人资料 =====
+  loadProfile() {
+    const profile = Storage.getProfile();
+    const avatarEl = document.getElementById('avatar-emoji');
+    if (profile.avatarPhoto) {
+      avatarEl.innerHTML = `<img src="${profile.avatarPhoto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    } else if (profile.avatar) {
+      avatarEl.textContent = profile.avatar;
+    }
+    if (profile.name) document.getElementById('profile-name').textContent = profile.name;
+    if (profile.signature) document.getElementById('profile-signature').textContent = profile.signature;
+  },
+
+  openProfileEditor() {
+    const profile = Storage.getProfile();
+    document.getElementById('edit-name').value = profile.name || '';
+    document.getElementById('edit-signature').value = profile.signature || '';
+
+    // 头像选择器
+    const picker = document.getElementById('avatar-picker');
+    picker.innerHTML = this.avatars.map(a => `
+      <div class="avatar-option${(!profile.avatarPhoto && profile.avatar === a) ? ' selected' : ''}" onclick="App.selectAvatar('${a}')">${a}</div>
+    `).join('');
+
+    this._editingAvatar = profile.avatar || '🐱';
+    this._editingAvatarPhoto = profile.avatarPhoto || null;
+    document.getElementById('profile-modal').classList.add('show');
+  },
+
+  uploadAvatarPhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this._editingAvatarPhoto = e.target.result;
+      this._editingAvatar = null;
+      // 清除 emoji 选中
+      document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+      // 预览
+      document.getElementById('avatar-emoji').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      this.toast('📷 头像照片已选择');
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+  },
+
+  selectAvatar(avatar) {
+    this._editingAvatar = avatar;
+    this._editingAvatarPhoto = null;
+    document.getElementById('avatar-emoji').textContent = avatar;
+    document.querySelectorAll('.avatar-option').forEach(el => {
+      el.classList.toggle('selected', el.textContent === avatar);
+    });
+  },
+
+  saveProfile() {
+    const name = document.getElementById('edit-name').value.trim();
+    const signature = document.getElementById('edit-signature').value.trim();
+
+    if (!name) { this.toast('请输入昵称 ✏️'); return; }
+
+    const profile = {
+      avatar: this._editingAvatar,
+      avatarPhoto: this._editingAvatarPhoto,
+      name,
+      signature
+    };
+    Storage.saveProfile(profile);
+
+    // 更新显示
+    const avatarEl = document.getElementById('avatar-emoji');
+    if (profile.avatarPhoto) {
+      avatarEl.innerHTML = `<img src="${profile.avatarPhoto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    } else if (profile.avatar) {
+      avatarEl.textContent = profile.avatar;
+    }
+    document.getElementById('profile-name').textContent = profile.name;
+    document.getElementById('profile-signature').textContent = profile.signature;
+
+    document.getElementById('profile-modal').classList.remove('show');
+    this.toast('个人资料已保存 💾');
+  },
+
+  closeProfileEditor(e) {
+    if (e && e.target !== document.getElementById('profile-modal')) return;
+    document.getElementById('profile-modal').classList.remove('show');
+  },
+
+  // ===== 打卡 =====
+  todayCheckin() {
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const checkins = Storage.getCheckins();
+
+    if (checkins.includes(todayStr)) {
+      this.toast('今天已经打过卡啦~ 🌟');
+      return;
+    }
+
+    checkins.push(todayStr);
+    Storage.saveCheckins(checkins);
+    this.updateCheckinUI();
+
+    // 按钮动画
+    const btn = document.getElementById('checkin-btn');
+    btn.classList.add('checked');
+    setTimeout(() => btn.classList.remove('checked'), 1000);
+
+    this.toast('打卡成功！🌟 又是元气满满的一天~');
+  },
+
+  updateCheckinUI() {
+    const checkins = Storage.getCheckins();
+    const now = new Date();
+    const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+    // 本月打卡天数
+    const monthCheckins = checkins.filter(d => d.startsWith(thisMonth));
+    document.getElementById('checkin-total').textContent = `${monthCheckins.length} 天`;
+
+    // 连续打卡天数
+    let streak = 0;
+    const today = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(today.getTime() - i * 86400000);
+      const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      if (checkins.includes(ds)) streak++;
+      else break;
+    }
+    document.getElementById('checkin-streak').textContent = `${streak} 天`;
+
+    // 今日是否已打卡
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const btn = document.getElementById('checkin-btn');
+    if (checkins.includes(todayStr)) {
+      btn.classList.add('checked');
+      btn.textContent = '✅ 今日已打卡';
+    } else {
+      btn.classList.remove('checked');
+      btn.textContent = '🌟 今日打卡';
+    }
+  },
+
+  // ===== Tab切换 =====
+  switchTab(tab) {
+    this.currentTab = tab;
+
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+
+    // 切换到对应tab时刷新数据
+    if (tab === 'diet') Diet.loadDay();
+    if (tab === 'mealplan') MealPlan.loadPlan();
+    if (tab === 'media') MediaHelper.renderPlanList();
+    if (tab === 'outfit') Outfit.renderOutfits();
+    if (tab === 'invest') Invest.renderCards();
+    if (tab === 'fitness') { Fitness.updateDateDisplay(); Fitness.renderPlan(); }
+    if (tab === 'finance') { Finance.loadDay(); Finance.updateMonthSummary(); }
+    if (tab === 'trends') Trends.renderAll();
+    if (tab === 'calendar') Calendar.render();
+
+    // 移动端关闭侧边栏
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  },
+
+  switchTabAndShowSummary() {
+    this.switchTab('diet');
+    setTimeout(() => Diet.renderMonthlySummary(), 100);
+  },
+
+  // ===== 移动端侧边栏 =====
+  toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  },
+
+  // ===== Toast =====
+  toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+  }
+};
+
+// 启动
+document.addEventListener('DOMContentLoaded', () => App.init());
+
+// 点击主内容区关闭侧边栏（移动端）
+document.querySelector('.main-area')?.addEventListener('click', () => {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+  }
+});
+
+</script>
+</body>
+</html>
